@@ -153,6 +153,14 @@ export default function AdminDashboard() {
     return matchesSearch && matchesStatus;
   });
 
+  const bookingStatusOptions: string[] = Array.from(
+    new Set<string>(
+      (stats.recentBookings || []).map((b: any) =>
+        String(b.status || "unknown").toLowerCase(),
+      ),
+    ),
+  );
+
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 py-16">
       <div className="mx-auto max-w-6xl space-y-8">
@@ -357,7 +365,7 @@ export default function AdminDashboard() {
                 aria-label="Filter recent bookings by status"
               >
                 <option value="all">All statuses</option>
-                {Array.from(new Set((stats.recentBookings || []).map((b: any) => String(b.status || "unknown").toLowerCase()))).map((status: string) => (
+                {bookingStatusOptions.map((status) => (
                   <option key={status} value={status}>
                     {status}
                   </option>
