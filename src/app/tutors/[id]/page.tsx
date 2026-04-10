@@ -63,6 +63,7 @@ export default function TutorDetailsPage() {
   const [relatedTutors, setRelatedTutors] = useState<any[]>([]);
   const [imageFailed, setImageFailed] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [reviewSortBy, setReviewSortBy] = useState<"newest" | "highest">("newest");
 
   const copyProfileLink = async () => {
     try {
@@ -150,6 +151,10 @@ export default function TutorDetailsPage() {
     return sum + duration;
   }, 0);
   const totalBookedDays = Math.ceil(totalBookedHours / 24);
+  const sortedReviews = [...(tutor.reviews || [])].sort((a: any, b: any) => {
+    if (reviewSortBy === "highest") return b.rating - a.rating;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
 
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 py-16">
@@ -281,9 +286,20 @@ export default function TutorDetailsPage() {
               {/* Reviews */}
               {tutor.reviews && tutor.reviews.length > 0 && (
                 <div className="mt-8">
-                  <h3 className="text-lg font-bold mb-2">Reviews</h3>
+                  <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <h3 className="text-lg font-bold">Reviews</h3>
+                    <button
+                      type="button"
+                      className="rounded border px-3 py-1 text-sm hover:bg-muted"
+                      onClick={() =>
+                        setReviewSortBy((prev) => (prev === "newest" ? "highest" : "newest"))
+                      }
+                    >
+                      Sort: {reviewSortBy === "newest" ? "Newest" : "Highest rating"}
+                    </button>
+                  </div>
                   <div className="space-y-4">
-                    {tutor.reviews.map((review: any) => {
+                    {sortedReviews.map((review: any) => {
                       const canDelete = user && (((user as any).role === "ADMIN") || ((user as any).id === review.studentId));
                       return (
                         <Card key={review.id} className="bg-muted">
