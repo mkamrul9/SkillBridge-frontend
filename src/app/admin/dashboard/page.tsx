@@ -89,6 +89,28 @@ export default function AdminDashboard() {
   const [bookingSearch, setBookingSearch] = useState("");
   const [bookingStatusFilter, setBookingStatusFilter] = useState("all");
 
+  const exportRecentBookingsCsv = (rows: any[]) => {
+    const header = ["student", "tutor", "status", "createdAt"];
+    const dataRows = rows.map((booking) => [
+      booking.student?.name || "N/A",
+      booking.tutor?.user?.name || "N/A",
+      booking.status || "unknown",
+      booking.createdAt ? new Date(booking.createdAt).toISOString() : "N/A",
+    ]);
+
+    const csv = [header, ...dataRows]
+      .map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "recent-bookings.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     const apiUrl = getApiBaseUrl();
     fetch(`${apiUrl}/api/admin/dashboard`, { credentials: "include" })
@@ -136,9 +158,19 @@ export default function AdminDashboard() {
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <Link href="/admin/users">
-            <Button className="w-full sm:w-auto">Manage Users</Button>
-          </Link>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full sm:w-auto"
+              onClick={() => exportRecentBookingsCsv(filteredRecentBookings)}
+            >
+              Export CSV
+            </Button>
+            <Link href="/admin/users">
+              <Button className="w-full sm:w-auto">Manage Users</Button>
+            </Link>
+          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
