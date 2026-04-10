@@ -22,7 +22,7 @@ function TutorsPageSkeleton() {
             <Skeleton className="h-6 w-36" />
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, idx) => (
                 <Skeleton key={`filter-skeleton-${idx}`} className="h-10 w-full" />
               ))}
@@ -32,7 +32,7 @@ function TutorsPageSkeleton() {
 
         <Skeleton className="h-5 w-48" />
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 9 }).map((_, idx) => (
             <Card key={`tutor-skeleton-${idx}`} className="h-full">
               <CardHeader>
@@ -295,44 +295,46 @@ export default function TutorsPage() {
           Found {totalResults} tutor{totalResults !== 1 ? "s" : ""}
         </p>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {tutors.map((tutor) => {
             const avgRating = tutor.reviews?.length
               ? (tutor.reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / tutor.reviews.length).toFixed(1)
               : "N/A";
 
             return (
-              <Link key={tutor.id} href={`/tutors/${tutor.id}`}>
-                <Card className="h-full hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <CardTitle className="text-lg">{tutor.user.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground line-clamp-2">{tutor.bio || "No bio"}</p>
-                      {tutor.categories && tutor.categories.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {tutor.categories.slice(0, 2).map((cat: any) => (
-                            <span key={cat.id} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                              {cat.name}
-                            </span>
-                          ))}
-                          {tutor.categories.length > 2 && (
-                            <span className="text-xs text-muted-foreground px-2 py-1">
-                              +{tutor.categories.length - 2} more
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      <div className="flex justify-between text-sm">
-                        <span className="font-medium">${tutor.hourlyRate}/hr</span>
-                        <span>⭐ {avgRating}</span>
+              <Card key={tutor.id} className="flex h-full flex-col transition-shadow hover:shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-lg">{tutor.user.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-1 flex-col justify-between">
+                  <div className="space-y-2">
+                    <p className="line-clamp-2 text-sm text-muted-foreground">{tutor.bio || "No bio"}</p>
+                    {tutor.categories && tutor.categories.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {tutor.categories.slice(0, 2).map((cat: any) => (
+                          <span key={cat.id} className="rounded bg-primary/10 px-2 py-1 text-xs text-primary">
+                            {cat.name}
+                          </span>
+                        ))}
+                        {tutor.categories.length > 2 && (
+                          <span className="px-2 py-1 text-xs text-muted-foreground">
+                            +{tutor.categories.length - 2} more
+                          </span>
+                        )}
                       </div>
-                      <p className="text-sm text-muted-foreground">{tutor.experience} years exp</p>
+                    )}
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium">${tutor.hourlyRate}/hr</span>
+                      <span>⭐ {avgRating}</span>
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
+                    <p className="text-sm text-muted-foreground">{tutor.experience} years exp</p>
+                  </div>
+
+                  <Link href={`/tutors/${tutor.id}`} className="mt-4">
+                    <Button className="w-full">View Details</Button>
+                  </Link>
+                </CardContent>
+              </Card>
             );
           })}
         </div>
