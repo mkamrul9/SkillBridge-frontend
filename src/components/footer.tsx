@@ -63,6 +63,11 @@ export default function Footer() {
               </Link>
             </li>
             <li>
+              <Link href="/help" className="transition-colors hover:text-cyan-300">
+                Help Center
+              </Link>
+            </li>
+            <li>
               <Link href="/login" className="transition-colors hover:text-cyan-300">
                 Login
               </Link>

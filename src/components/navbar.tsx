@@ -12,6 +12,7 @@ const navConfig = {
   common: [
     { href: "/", label: "Home" },
     { href: "/tutors", label: "Tutors" },
+    { href: "/help", label: "Help" },
   ],
   student: [
     { href: "/bookings", label: "My Bookings" },
