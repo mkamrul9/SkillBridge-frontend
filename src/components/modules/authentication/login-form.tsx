@@ -30,10 +30,20 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
   const { setUser } = useUser();
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  // Clear any URL query parameters on mount to prevent auto-fill from persisted state
+  // Surface OAuth errors on return, then clean URL query parameters.
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.search) {
-      window.history.replaceState({}, '', window.location.pathname);
+    if (typeof window !== "undefined" && window.location.search) {
+      const params = new URLSearchParams(window.location.search);
+      const error = params.get("error");
+      const socialError = params.get("socialError");
+
+      if (error === "state_mismatch") {
+        toast.error("Google sign-in expired or was interrupted. Please try again.");
+      } else if (socialError || error) {
+        toast.error("Google sign-in failed. Please try again.");
+      }
+
+      window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
 
@@ -41,25 +51,20 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
     const toastId = toast.loading("Redirecting to Google...");
     setGoogleLoading(true);
     try {
+      const callbackURL = `${window.location.origin}/dashboard`;
+      const errorCallbackURL = `${window.location.origin}/login?socialError=google`;
+
       const response = await (authClient as any).signIn.social({
         provider: "google",
-        callbackURL: "/",
-        disableRedirect: true,
+        callbackURL,
+        errorCallbackURL,
       });
 
       if (response?.error) {
         toast.error(response.error.message || "Google sign-in failed", { id: toastId });
-        return;
-      }
-
-      const redirectUrl = response?.data?.url;
-      if (redirectUrl) {
+      } else {
         toast.success("Opening Google sign-in...", { id: toastId });
-        window.location.href = redirectUrl;
-        return;
       }
-
-      toast.error("Could not start Google sign-in", { id: toastId });
     } catch (error) {
       toast.error("Google sign-in failed. Please try again.", { id: toastId });
     } finally {
@@ -118,6 +123,26 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
       }
     },
   });
+
+  const fillDemoCredentials = (type: "user" | "admin") => {
+    const demoUserEmail =
+      process.env.NEXT_PUBLIC_DEMO_USER_EMAIL || "student.demo@skillbridge.com";
+    const demoUserPassword =
+      process.env.NEXT_PUBLIC_DEMO_USER_PASSWORD || "DemoUser123!";
+    const demoAdminEmail =
+      process.env.NEXT_PUBLIC_DEMO_ADMIN_EMAIL || "admin.demo@skillbridge.com";
+    const demoAdminPassword =
+      process.env.NEXT_PUBLIC_DEMO_ADMIN_PASSWORD || "DemoAdmin123!";
+
+    if (type === "admin") {
+      form.setFieldValue("email", demoAdminEmail);
+      form.setFieldValue("password", demoAdminPassword);
+      return;
+    }
+
+    form.setFieldValue("email", demoUserEmail);
+    form.setFieldValue("password", demoUserPassword);
+  };
 
   return (
     <Card {...props}>
@@ -221,6 +246,22 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
         <Button form="login-form" type="submit" className="w-full">
           Sign In
         </Button>
+        <div className="grid w-full grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => fillDemoCredentials("user")}
+          >
+            Demo User
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => fillDemoCredentials("admin")}
+          >
+            Demo Admin
+          </Button>
+        </div>
         <p className="px-8 text-center text-sm text-muted-foreground">
           Don't have an account?{" "}
           <a

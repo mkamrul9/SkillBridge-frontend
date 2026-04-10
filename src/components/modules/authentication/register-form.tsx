@@ -44,31 +44,40 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
         }
       })
       .catch(() => console.error("Failed to load categories"));
+
+    if (typeof window !== "undefined" && window.location.search) {
+      const params = new URLSearchParams(window.location.search);
+      const error = params.get("error");
+      const socialError = params.get("socialError");
+
+      if (error === "state_mismatch") {
+        toast.error("Google sign-in expired or was interrupted. Please try again.");
+      } else if (socialError || error) {
+        toast.error("Google sign-in failed. Please try again.");
+      }
+
+      window.history.replaceState({}, "", window.location.pathname);
+    }
   }, []);
 
   const handleGoogleSignIn = async () => {
     const toastId = toast.loading("Redirecting to Google...");
     setGoogleLoading(true);
     try {
+      const callbackURL = `${window.location.origin}/dashboard`;
+      const errorCallbackURL = `${window.location.origin}/register?socialError=google`;
+
       const response = await (authClient as any).signIn.social({
         provider: "google",
-        callbackURL: "/",
-        disableRedirect: true,
+        callbackURL,
+        errorCallbackURL,
       });
 
       if (response?.error) {
         toast.error(response.error.message || "Google sign-in failed", { id: toastId });
-        return;
-      }
-
-      const redirectUrl = response?.data?.url;
-      if (redirectUrl) {
+      } else {
         toast.success("Opening Google sign-in...", { id: toastId });
-        window.location.href = redirectUrl;
-        return;
       }
-
-      toast.error("Could not start Google sign-in", { id: toastId });
     } catch (error) {
       toast.error("Google sign-in failed. Please try again.", { id: toastId });
     } finally {
@@ -356,7 +365,7 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
                           placeholder="Tell students about your teaching experience..."
-                          className="w-full rounded-md border px-3 py-2 min-h-[80px]"
+                          className="w-full min-h-20 rounded-md border px-3 py-2"
                         />
                         {isInvalid && (
                           <FieldError errors={field.state.meta.errors} />
@@ -372,11 +381,10 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
                     {categories.map((category) => (
                       <label
                         key={category.id}
-                        className={`cursor-pointer rounded-full px-4 py-2 text-sm border transition-colors ${
-                          selectedCategoryIds.includes(category.id)
+                        className={`cursor-pointer rounded-full px-4 py-2 text-sm border transition-colors ${selectedCategoryIds.includes(category.id)
                             ? "bg-primary text-primary-foreground border-primary"
                             : "bg-background hover:bg-muted border-input"
-                        }`}
+                          }`}
                       >
                         <input
                           type="checkbox"
