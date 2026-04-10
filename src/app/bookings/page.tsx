@@ -44,6 +44,8 @@ export default function BookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [upcomingSortOrder, setUpcomingSortOrder] = useState<"asc" | "desc">("asc");
+  const [pastSortOrder, setPastSortOrder] = useState<"asc" | "desc">("desc");
   const { user } = useUser();
 
   useEffect(() => {
@@ -109,6 +111,18 @@ export default function BookingsPage() {
     return otherParty.includes(search) || status.includes(search);
   });
 
+  const sortedUpcomingBookings = [...filteredUpcomingBookings].sort((a, b) => {
+    const first = new Date(a.startTime).getTime();
+    const second = new Date(b.startTime).getTime();
+    return upcomingSortOrder === "asc" ? first - second : second - first;
+  });
+
+  const sortedPastBookings = [...filteredPastBookings].sort((a, b) => {
+    const first = new Date(a.startTime).getTime();
+    const second = new Date(b.startTime).getTime();
+    return pastSortOrder === "asc" ? first - second : second - first;
+  });
+
   const getStatusBadgeClass = (status: string) => {
     const normalized = String(status || "").toLowerCase();
     if (normalized === "completed") return "bg-emerald-100 text-emerald-700 border-emerald-300";
@@ -166,11 +180,21 @@ export default function BookingsPage() {
         
         {/* Upcoming Bookings */}
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-primary">📅 Upcoming Bookings ({filteredUpcomingBookings.length})</h2>
-          {filteredUpcomingBookings.length === 0 ? (
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-2xl font-semibold text-primary">📅 Upcoming Bookings ({filteredUpcomingBookings.length})</h2>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setUpcomingSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))}
+            >
+              Sort: {upcomingSortOrder === "asc" ? "Earliest first" : "Latest first"}
+            </Button>
+          </div>
+          {sortedUpcomingBookings.length === 0 ? (
             <p className="text-muted-foreground">No upcoming bookings</p>
           ) : (
-            filteredUpcomingBookings.map((booking) => {
+            sortedUpcomingBookings.map((booking) => {
               const otherParty = booking.tutor?.user?.name || booking.student?.name || booking.tutor?.user?.email || booking.student?.email;
               // Admin can delete any booking
               const canDelete = user?.role === "ADMIN";
@@ -222,11 +246,21 @@ export default function BookingsPage() {
 
         {/* Past Bookings */}
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-muted-foreground">📋 Past Bookings ({filteredPastBookings.length})</h2>
-          {filteredPastBookings.length === 0 ? (
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-2xl font-semibold text-muted-foreground">📋 Past Bookings ({filteredPastBookings.length})</h2>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setPastSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))}
+            >
+              Sort: {pastSortOrder === "asc" ? "Earliest first" : "Latest first"}
+            </Button>
+          </div>
+          {sortedPastBookings.length === 0 ? (
             <p className="text-muted-foreground">No past bookings</p>
           ) : (
-            filteredPastBookings.map((booking) => {
+            sortedPastBookings.map((booking) => {
               const otherParty = booking.tutor?.user?.name || booking.student?.name || booking.tutor?.user?.email || booking.student?.email;
               const canDelete = user?.role === "ADMIN";
               const canReview = user?.role === "STUDENT" && booking.status === "completed" && !booking.reviewedByStudent;
