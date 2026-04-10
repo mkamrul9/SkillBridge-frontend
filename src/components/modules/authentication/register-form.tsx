@@ -25,6 +25,12 @@ import { useUser } from "@/lib/user-context";
 import { useState, useEffect } from "react";
 import { getApiBaseUrl } from "@/lib/api-url";
 
+const debugError = (...args: unknown[]) => {
+  if (process.env.NODE_ENV !== "production") {
+    console.error(...args);
+  }
+};
+
 export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
   const router = useRouter();
   const { setUser } = useUser();
@@ -43,7 +49,7 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
           setCategories(data.data);
         }
       })
-      .catch(() => console.error("Failed to load categories"));
+      .catch(() => debugError("Failed to load categories"));
 
     if (typeof window !== "undefined" && window.location.search) {
       const params = new URLSearchParams(window.location.search);
@@ -80,7 +86,7 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
       } else {
         toast.success("Opening Google sign-in...", { id: toastId });
       }
-    } catch (error) {
+    } catch {
       toast.error("Google sign-in failed. Please try again.", { id: toastId });
     } finally {
       setGoogleLoading(false);
@@ -123,7 +129,7 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
             body: JSON.stringify({ phone: value.phone }),
           });
         } catch (err) {
-          console.error("Failed to update phone:", err);
+          debugError("Failed to update phone:", err);
         }
 
         // If tutor role, create tutor profile
@@ -150,7 +156,7 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
               return;
             }
           } catch (err) {
-            console.error("Failed to create tutor profile:", err);
+            debugError("Failed to create tutor profile:", err);
             toast.error("Failed to create tutor profile", { id: toastId });
             return;
           }
@@ -166,13 +172,13 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
             setUser(userData.data);
           }
         } catch (err) {
-          console.error("Failed to fetch user data:", err);
+          debugError("Failed to fetch user data:", err);
         }
 
         toast.success(selectedRole === "TUTOR" ? "Tutor account created successfully!" : "Account created successfully!", { id: toastId });
         router.push("/");
       } catch (err) {
-        console.error("Registration error:", err);
+        debugError("Registration error:", err);
         toast.error("Something went wrong. Please try again.", { id: toastId });
       }
     },

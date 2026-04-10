@@ -25,6 +25,12 @@ import { useUser } from "@/lib/user-context";
 import { useEffect, useState } from "react";
 import { getApiBaseUrl } from "@/lib/api-url";
 
+const debugError = (...args: unknown[]) => {
+  if (process.env.NODE_ENV !== "production") {
+    console.error(...args);
+  }
+};
+
 export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
   const router = useRouter();
   const { setUser } = useUser();
@@ -67,7 +73,7 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
       } else {
         toast.success("Opening Google sign-in...", { id: toastId });
       }
-    } catch (error) {
+    } catch {
       toast.error("Google sign-in failed. Please try again.", { id: toastId });
     } finally {
       setGoogleLoading(false);
@@ -114,13 +120,13 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
             setUser(userData.data);
           }
         } catch (err) {
-          console.error("Failed to fetch user data:", err);
+          debugError("Failed to fetch user data:", err);
         }
 
         toast.success("Signed in successfully!", { id: toastId });
         router.push("/");
       } catch (err) {
-        console.error("Login error:", err);
+        debugError("Login error:", err);
         toast.error("Something went wrong. Please try again.", { id: toastId });
       }
     },

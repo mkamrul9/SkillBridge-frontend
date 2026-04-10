@@ -10,6 +10,12 @@ import Link from "next/link";
 import { getApiBaseUrl } from "@/lib/api-url";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const debugError = (...args: unknown[]) => {
+  if (process.env.NODE_ENV !== "production") {
+    console.error(...args);
+  }
+};
+
 function TutorsPageSkeleton() {
   return (
     <div className="min-h-screen bg-background px-6 py-16">
@@ -80,7 +86,7 @@ export default function TutorsPage() {
       .then((data) => {
         if (data.success) setCategories(data.data);
       })
-      .catch(() => console.error("Failed to load categories"));
+      .catch(() => debugError("Failed to load categories"));
 
     // Fetch all tutors initially
     fetchTutors({}, 1);
