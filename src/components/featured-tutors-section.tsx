@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { getFeaturedTutors } from "@/lib/tutor-api";
 import { DEFAULT_AVATAR } from "@/lib/default-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 
 export default function FeaturedTutorsSection() {
   const [tutors, setTutors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [failedImageIds, setFailedImageIds] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     let mounted = true;
@@ -39,14 +41,26 @@ export default function FeaturedTutorsSection() {
 
         {tutors.map((tutor: any) => (
           <div key={tutor.id} className="flex flex-col items-center bg-gray-50 rounded-lg shadow p-6">
-            <img
-              src={tutor.user?.image || DEFAULT_AVATAR}
+            <Image
+              src={
+                failedImageIds[tutor.id]
+                  ? DEFAULT_AVATAR
+                  : tutor.user?.image || DEFAULT_AVATAR
+              }
               alt={tutor.user?.name || "Tutor"}
-              onError={(e) => { (e.currentTarget as HTMLImageElement).src = DEFAULT_AVATAR; }}
-              className="w-20 h-20 rounded-full mb-4 object-cover border-2 border-primary"
+              width={80}
+              height={80}
+              loading="lazy"
+              onError={() =>
+                setFailedImageIds((prev) => ({
+                  ...prev,
+                  [tutor.id]: true,
+                }))
+              }
+              className="mb-4 h-20 w-20 rounded-full border-2 border-primary object-cover"
             />
             <h3 className="font-semibold text-lg mb-1">{tutor.user?.name || "Tutor"}</h3>
-            <p className="text-muted-foreground text-sm mb-2">{(tutor.categories || []).map((cat:any) => cat.name).join(", ")}</p>
+            <p className="text-muted-foreground text-sm mb-2">{(tutor.categories || []).map((cat: any) => cat.name).join(", ")}</p>
             <p className="text-gray-600 text-sm mb-2">{tutor.bio || "No bio available."}</p>
             <span className="text-primary font-semibold">{(tutor.reviews || []).length || 0} Reviews</span>
           </div>
