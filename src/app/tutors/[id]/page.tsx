@@ -147,6 +147,8 @@ export default function TutorDetailsPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
           <button
             className="w-full sm:w-auto px-4 py-2 rounded bg-muted hover:bg-muted/70 border border-border text-base text-center"
+            type="button"
+            aria-label="Go back to previous page"
             onClick={() => window.history.back()}
           >
             Back
@@ -160,12 +162,13 @@ export default function TutorDetailsPage() {
             </a>
           )}
           {!user && (
-            <span
-              className="w-full sm:w-auto mt-2 sm:mt-0 text-base font-bold text-white bg-red-600 border-2 border-red-800 px-4 py-2 rounded shadow-lg animate-pulse text-center"
-              style={{ letterSpacing: '0.05em' }}
+            <div
+              role="alert"
+              aria-live="polite"
+              className="w-full sm:w-auto mt-2 sm:mt-0 rounded border border-amber-300 bg-amber-50 px-4 py-2 text-center text-sm font-medium text-amber-900"
             >
-              ⚠️ Please <a href='/login' className="underline text-yellow-200 hover:text-white">login</a> to create a new booking!
-            </span>
+              Please <a href='/login' className="underline">log in</a> to create a new booking.
+            </div>
           )}
         </div>
         <Card>
