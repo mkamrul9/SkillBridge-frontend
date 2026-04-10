@@ -22,12 +22,13 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useUser } from "@/lib/user-context";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getApiBaseUrl } from "@/lib/api-url";
 
 export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
   const router = useRouter();
   const { setUser } = useUser();
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   // Clear any URL query parameters on mount to prevent auto-fill from persisted state
   useEffect(() => {
@@ -35,6 +36,36 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
+
+  const handleGoogleSignIn = async () => {
+    const toastId = toast.loading("Redirecting to Google...");
+    setGoogleLoading(true);
+    try {
+      const response = await (authClient as any).signIn.social({
+        provider: "google",
+        callbackURL: "/",
+        disableRedirect: true,
+      });
+
+      if (response?.error) {
+        toast.error(response.error.message || "Google sign-in failed", { id: toastId });
+        return;
+      }
+
+      const redirectUrl = response?.data?.url;
+      if (redirectUrl) {
+        toast.success("Opening Google sign-in...", { id: toastId });
+        window.location.href = redirectUrl;
+        return;
+      }
+
+      toast.error("Could not start Google sign-in", { id: toastId });
+    } catch (error) {
+      toast.error("Google sign-in failed. Please try again.", { id: toastId });
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   const form = useForm({
     defaultValues: {
@@ -173,6 +204,20 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={handleGoogleSignIn}
+          disabled={googleLoading}
+        >
+          {googleLoading ? "Connecting..." : "Continue with Google"}
+        </Button>
+        <div className="flex w-full items-center gap-2 text-xs text-muted-foreground">
+          <div className="h-px flex-1 bg-border" />
+          <span>or continue with email</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
         <Button form="login-form" type="submit" className="w-full">
           Sign In
         </Button>

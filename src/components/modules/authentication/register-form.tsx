@@ -31,6 +31,7 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [selectedRole, setSelectedRole] = useState<"STUDENT" | "TUTOR">("STUDENT");
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   useEffect(() => {
     // Fetch categories for tutor registration
@@ -44,6 +45,36 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
       })
       .catch(() => console.error("Failed to load categories"));
   }, []);
+
+  const handleGoogleSignIn = async () => {
+    const toastId = toast.loading("Redirecting to Google...");
+    setGoogleLoading(true);
+    try {
+      const response = await (authClient as any).signIn.social({
+        provider: "google",
+        callbackURL: "/",
+        disableRedirect: true,
+      });
+
+      if (response?.error) {
+        toast.error(response.error.message || "Google sign-in failed", { id: toastId });
+        return;
+      }
+
+      const redirectUrl = response?.data?.url;
+      if (redirectUrl) {
+        toast.success("Opening Google sign-in...", { id: toastId });
+        window.location.href = redirectUrl;
+        return;
+      }
+
+      toast.error("Could not start Google sign-in", { id: toastId });
+    } catch (error) {
+      toast.error("Google sign-in failed. Please try again.", { id: toastId });
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   const form = useForm({
     defaultValues: {
@@ -434,6 +465,20 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={handleGoogleSignIn}
+          disabled={googleLoading}
+        >
+          {googleLoading ? "Connecting..." : "Continue with Google"}
+        </Button>
+        <div className="flex w-full items-center gap-2 text-xs text-muted-foreground">
+          <div className="h-px flex-1 bg-border" />
+          <span>or continue with email</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
         <Button form="register-form" type="submit" className="w-full">
           {selectedRole === "TUTOR" ? "Create Tutor Account" : "Create Account"}
         </Button>
