@@ -6,6 +6,38 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useUser } from "@/lib/user-context";
 import { getApiBaseUrl } from "@/lib/api-url";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function BookingsPageSkeleton() {
+  return (
+    <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl space-y-6">
+        <Skeleton className="h-10 w-48" />
+        <Skeleton className="h-8 w-72" />
+        {Array.from({ length: 3 }).map((_, idx) => (
+          <Card key={`booking-skeleton-${idx}`}>
+            <CardHeader>
+              <Skeleton className="h-6 w-64" />
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div className="space-y-2 md:col-span-2">
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-4 w-56" />
+                  <Skeleton className="h-4 w-56" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="h-9 w-full" />
+                  <Skeleton className="h-9 w-full" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 
 export default function BookingsPage() {
@@ -43,7 +75,7 @@ export default function BookingsPage() {
     }
   };
 
-  if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+  if (loading) return <BookingsPageSkeleton />;
 
   const now = new Date();
   const upcomingBookings = bookings.filter(b => new Date(b.startTime) > now);
