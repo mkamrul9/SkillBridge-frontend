@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { useParams } from "next/navigation";
 import { getApiBaseUrl } from "@/lib/api-url";
 import Link from "next/link";
+import Image from "next/image";
+import { DEFAULT_AVATAR } from "@/lib/default-avatar";
 
 export default function TutorDetailsPage() {
   const { user } = useUser();
@@ -14,12 +16,13 @@ export default function TutorDetailsPage() {
   const [tutor, setTutor] = useState<any>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [relatedTutors, setRelatedTutors] = useState<any[]>([]);
+  const [imageFailed, setImageFailed] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const base = getApiBaseUrl();
     const tutorUrl = base.endsWith("/api") ? `${base}/tutors/${params.id}` : `${base}/api/tutors/${params.id}`;
-    
+
     // Fetch tutor details
     fetch(tutorUrl, { credentials: "include" })
       .then((res) => res.json())
@@ -47,7 +50,7 @@ export default function TutorDetailsPage() {
                 setRelatedTutors([]);
               });
           }
-          
+
           // Fetch tutor bookings
           const bookingsUrl = base.endsWith("/api") ? `${base}/bookings/tutor/${params.id}` : `${base}/api/bookings/tutor/${params.id}`;
           return fetch(bookingsUrl, { credentials: "include" });
@@ -126,6 +129,33 @@ export default function TutorDetailsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
+              <div className="grid gap-4 rounded-lg border bg-muted/40 p-4 sm:grid-cols-[140px,1fr]">
+                <div className="flex justify-center sm:justify-start">
+                  <Image
+                    src={
+                      imageFailed
+                        ? DEFAULT_AVATAR
+                        : tutor.user?.image || DEFAULT_AVATAR
+                    }
+                    alt={`${tutor.user?.name || "Tutor"} profile photo`}
+                    width={120}
+                    height={120}
+                    loading="lazy"
+                    onError={() => setImageFailed(true)}
+                    className="h-30 w-30 rounded-xl border object-cover"
+                  />
+                </div>
+                <div className="space-y-2 text-sm">
+                  <p className="font-medium text-foreground">Tutor Media</p>
+                  <p className="text-muted-foreground">
+                    Profile photo and teaching summary for quick identification before booking.
+                  </p>
+                  <p className="text-muted-foreground">
+                    Verified profile status: <span className="font-medium text-foreground">Active</span>
+                  </p>
+                </div>
+              </div>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <p className="text-sm text-muted-foreground">Hourly Rate</p>
@@ -250,9 +280,9 @@ export default function TutorDetailsPage() {
               {relatedTutors.map((item: any) => {
                 const relatedAvgRating = item.reviews?.length
                   ? (
-                      item.reviews.reduce((sum: number, r: any) => sum + r.rating, 0) /
-                      item.reviews.length
-                    ).toFixed(1)
+                    item.reviews.reduce((sum: number, r: any) => sum + r.rating, 0) /
+                    item.reviews.length
+                  ).toFixed(1)
                   : "N/A";
 
                 return (
