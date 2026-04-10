@@ -8,6 +8,51 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import Link from "next/link";
 import { getApiBaseUrl } from "@/lib/api-url";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function TutorsPageSkeleton() {
+  return (
+    <div className="min-h-screen bg-background px-6 py-16">
+      <div className="mx-auto max-w-6xl space-y-6">
+        <Skeleton className="h-10 w-24" />
+        <Skeleton className="h-10 w-56" />
+
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-36" />
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 8 }).map((_, idx) => (
+                <Skeleton key={`filter-skeleton-${idx}`} className="h-10 w-full" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Skeleton className="h-5 w-48" />
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 9 }).map((_, idx) => (
+            <Card key={`tutor-skeleton-${idx}`} className="h-full">
+              <CardHeader>
+                <Skeleton className="h-6 w-40" />
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function TutorsPage() {
   const [tutors, setTutors] = useState<any[]>([]);
@@ -16,7 +61,7 @@ export default function TutorsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
-  
+
   // Filter states
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -28,7 +73,7 @@ export default function TutorsPage() {
 
   useEffect(() => {
     const base = getApiBaseUrl();
-    
+
     // Fetch categories
     fetch(`${base}/api/categories`, { credentials: "include" })
       .then((res) => res.json())
@@ -36,7 +81,7 @@ export default function TutorsPage() {
         if (data.success) setCategories(data.data);
       })
       .catch(() => console.error("Failed to load categories"));
-    
+
     // Fetch all tutors initially
     fetchTutors({}, 1);
   }, []);
@@ -44,18 +89,18 @@ export default function TutorsPage() {
   const fetchTutors = (filters = {}, page = 1) => {
     const base = getApiBaseUrl();
     const url = base.endsWith("/api") ? `${base}/tutors` : `${base}/api/tutors`;
-    
+
     // Build query params
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (value) params.append(key, value as string);
     });
-    
+
     params.append("page", page.toString());
     params.append("limit", "9");
 
     const fetchUrl = `${url}?${params.toString()}`;
-    
+
     fetch(fetchUrl, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
@@ -87,7 +132,7 @@ export default function TutorsPage() {
 
   const handleApplyFilters = () => {
     const filters = getCurrentFilters();
-    
+
     setLoading(true);
     fetchTutors(filters, 1);
   };
@@ -110,7 +155,7 @@ export default function TutorsPage() {
     fetchTutors({}, 1);
   };
 
-  if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+  if (loading) return <TutorsPageSkeleton />;
 
   return (
     <div className="min-h-screen bg-background px-6 py-16">
@@ -122,7 +167,7 @@ export default function TutorsPage() {
         >
           Back
         </button>
-        
+
         <h1 className="text-3xl font-bold">Find a Tutor</h1>
 
         {/* Filters Section */}
