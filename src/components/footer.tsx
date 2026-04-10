@@ -72,6 +72,16 @@ export default function Footer() {
                 Register
               </Link>
             </li>
+            <li>
+              <Link href="/privacy" className="transition-colors hover:text-cyan-300">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link href="/terms" className="transition-colors hover:text-cyan-300">
+                Terms of Service
+              </Link>
+            </li>
           </ul>
         </div>
 
