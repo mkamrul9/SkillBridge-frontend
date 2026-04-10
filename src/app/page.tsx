@@ -49,6 +49,12 @@ export default function HomePage() {
   }, []);
 
   const slide = heroSlides[activeSlide];
+  const goToNextSlide = () => {
+    setActiveSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+  const goToPreviousSlide = () => {
+    setActiveSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+  };
 
   const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -93,6 +99,14 @@ export default function HomePage() {
           </div>
 
           <div className="flex items-center justify-center gap-2 pt-2">
+            <button
+              type="button"
+              aria-label="Previous hero slide"
+              onClick={goToPreviousSlide}
+              className="rounded border border-white/30 px-3 py-1 text-xs text-white/90 hover:bg-white/10"
+            >
+              Prev
+            </button>
             {heroSlides.map((_, index) => (
               <button
                 key={`hero-dot-${index}`}
@@ -102,6 +116,14 @@ export default function HomePage() {
                 className={`h-2.5 rounded-full transition-all ${activeSlide === index ? "w-8 bg-cyan-300" : "w-2.5 bg-white/40"}`}
               />
             ))}
+            <button
+              type="button"
+              aria-label="Next hero slide"
+              onClick={goToNextSlide}
+              className="rounded border border-white/30 px-3 py-1 text-xs text-white/90 hover:bg-white/10"
+            >
+              Next
+            </button>
           </div>
         </div>
 
