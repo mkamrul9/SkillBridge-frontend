@@ -2,10 +2,9 @@
 import Link from "next/link";
 import { useUser } from "@/lib/user-context";
 import { Button } from "@/components/ui/button";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import LoadingButton from "@/components/LoadingButton";
 
 const navConfig = {
   common: [
@@ -38,7 +37,17 @@ const navConfig = {
 export function Navbar() {
   const { user, setUser } = useUser();
   const pathname = usePathname();
-  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut({ fetchOptions: { credentials: "include" } });
+    } catch (e: any) {
+      console.error("Sign out error:", e);
+    }
+    setUser(null);
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  };
 
   let links = [...navConfig.common];
   if (user) {
@@ -68,42 +77,94 @@ export function Navbar() {
         {/* User info / avatar for desktop */}
         <div className="hidden sm:flex items-center ml-4">
           {user ? (
-            <div className="flex items-center gap-3">
-              <div className="text-xs text-muted-foreground mr-3 text-right">
-                <div className="font-semibold">{user.name}</div>
-                <div className="text-muted-foreground">{user.role}</div>
-              </div>
-              <LoadingButton size="sm" variant="ghost" onClick={async () => {
-                try {
-                  await authClient.signOut({ fetchOptions: { credentials: 'include' } });
-                } catch (e: any) {
-                  console.error('Sign out error:', e);
-                }
-                // Clear user state and localStorage
-                setUser(null);
-                localStorage.removeItem('token');
-                // Use window.location for hard redirect to clear all state
-                window.location.href = '/';
-              }}>
-                Logout
-              </LoadingButton>
-            </div>
+            <DesktopUserMenu user={user} onSignOut={handleSignOut} />
           ) : null}
         </div>
 
         {/* Mobile menu button */}
         <div className="sm:hidden ml-auto">
-          <MobileMenu uniqueLinks={uniqueLinks} pathname={pathname} user={user} />
+          <MobileMenu
+            uniqueLinks={uniqueLinks}
+            pathname={pathname}
+            user={user}
+            onSignOut={handleSignOut}
+          />
         </div>
       </div>
     </nav>
   );
 }
 
-function MobileMenu({ uniqueLinks, pathname, user }: any) {
+function DesktopUserMenu({ user, onSignOut }: any) {
   const [open, setOpen] = useState(false);
-  const { setUser } = useUser();
-  const router = useRouter();
+
+  const quickLinks =
+    user.role === "ADMIN"
+      ? [
+          { href: "/admin/dashboard", label: "Admin Dashboard" },
+          { href: "/profile", label: "My Profile" },
+        ]
+      : user.role === "TUTOR"
+        ? [
+            { href: "/dashboard", label: "Dashboard" },
+            { href: "/profile", label: "My Profile" },
+          ]
+        : [
+            { href: "/bookings", label: "My Bookings" },
+            { href: "/profile", label: "My Profile" },
+          ];
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-2 rounded-md border bg-card px-3 py-1.5 text-sm hover:bg-muted"
+      >
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+          {user.name?.[0]?.toUpperCase() || "U"}
+        </span>
+        <span className="max-w-35 truncate text-left">
+          <span className="block text-xs text-muted-foreground">{user.role}</span>
+          <span className="block font-medium text-foreground">{user.name}</span>
+        </span>
+      </button>
+
+      {open && (
+        <div className="absolute right-0 z-50 mt-2 w-52 rounded-md border bg-card p-2 shadow-xl">
+          <div className="border-b px-2 py-2 text-xs text-muted-foreground">
+            Signed in as {user.email}
+          </div>
+          <div className="py-1">
+            {quickLinks.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="block rounded px-2 py-2 text-sm hover:bg-muted"
+                onClick={() => setOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={async () => {
+              setOpen(false);
+              await onSignOut();
+            }}
+            className="mt-1 w-full rounded px-2 py-2 text-left text-sm text-destructive hover:bg-muted"
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MobileMenu({ uniqueLinks, pathname, user, onSignOut }: any) {
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="relative">
@@ -145,17 +206,8 @@ function MobileMenu({ uniqueLinks, pathname, user }: any) {
                   <button
                     className="w-full text-left px-3 py-2 text-sm text-destructive"
                     onClick={async () => {
-                      try {
-                        await authClient.signOut({ fetchOptions: { credentials: 'include' } });
-                      } catch (e) {
-                        console.error('Sign out error:', e);
-                      }
-                      // Clear user state and localStorage
-                      setUser(null);
-                      localStorage.removeItem('token');
                       setOpen(false);
-                      // Use window.location for hard redirect to clear all state
-                      window.location.href = '/';
+                      await onSignOut();
                     }}
                   >
                     Logout
