@@ -64,6 +64,16 @@ export default function TutorDetailsPage() {
   const [imageFailed, setImageFailed] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const copyProfileLink = async () => {
+    try {
+      const url = window.location.href;
+      await navigator.clipboard.writeText(url);
+      toast.success("Tutor profile link copied");
+    } catch {
+      toast.error("Failed to copy profile link");
+    }
+  };
+
   useEffect(() => {
     const base = getApiBaseUrl();
     const tutorUrl = base.endsWith("/api") ? `${base}/tutors/${params.id}` : `${base}/api/tutors/${params.id}`;
@@ -152,6 +162,14 @@ export default function TutorDetailsPage() {
             onClick={() => window.history.back()}
           >
             Back
+          </button>
+          <button
+            className="w-full sm:w-auto px-4 py-2 rounded border border-border text-base text-center hover:bg-muted"
+            type="button"
+            aria-label="Copy tutor profile link"
+            onClick={copyProfileLink}
+          >
+            Copy Profile Link
           </button>
           {(user as any)?.role === "STUDENT" && (
             <a
