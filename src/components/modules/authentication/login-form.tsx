@@ -51,8 +51,10 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
     const toastId = toast.loading("Redirecting to Google...");
     setGoogleLoading(true);
     try {
-      const callbackURL = `${window.location.origin}/dashboard`;
-      const errorCallbackURL = `${window.location.origin}/login?socialError=google`;
+      const appBaseUrl =
+        process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      const callbackURL = `${appBaseUrl}/dashboard`;
+      const errorCallbackURL = `${appBaseUrl}/login?socialError=google`;
 
       const response = await (authClient as any).signIn.social({
         provider: "google",

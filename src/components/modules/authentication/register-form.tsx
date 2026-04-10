@@ -64,8 +64,10 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
     const toastId = toast.loading("Redirecting to Google...");
     setGoogleLoading(true);
     try {
-      const callbackURL = `${window.location.origin}/dashboard`;
-      const errorCallbackURL = `${window.location.origin}/register?socialError=google`;
+      const appBaseUrl =
+        process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      const callbackURL = `${appBaseUrl}/dashboard`;
+      const errorCallbackURL = `${appBaseUrl}/register?socialError=google`;
 
       const response = await (authClient as any).signIn.social({
         provider: "google",
@@ -382,8 +384,8 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
                       <label
                         key={category.id}
                         className={`cursor-pointer rounded-full px-4 py-2 text-sm border transition-colors ${selectedCategoryIds.includes(category.id)
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-background hover:bg-muted border-input"
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-background hover:bg-muted border-input"
                           }`}
                       >
                         <input
