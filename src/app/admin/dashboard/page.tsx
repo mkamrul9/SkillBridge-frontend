@@ -86,6 +86,8 @@ function AdminDashboardSkeleton() {
 export default function AdminDashboard() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [bookingSearch, setBookingSearch] = useState("");
+  const [bookingStatusFilter, setBookingStatusFilter] = useState("all");
 
   useEffect(() => {
     const apiUrl = getApiBaseUrl();
@@ -116,6 +118,18 @@ export default function AdminDashboard() {
     label: `${index + 1}. ${item.status}`,
     value: item.count,
   }));
+
+  const filteredRecentBookings = (stats.recentBookings || []).filter((booking: any) => {
+    const studentName = booking.student?.name?.toLowerCase() || "";
+    const tutorName = booking.tutor?.user?.name?.toLowerCase() || "";
+    const status = booking.status?.toLowerCase() || "";
+    const search = bookingSearch.trim().toLowerCase();
+
+    const matchesSearch = !search || studentName.includes(search) || tutorName.includes(search);
+    const matchesStatus = bookingStatusFilter === "all" || status === bookingStatusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 py-16">
@@ -254,6 +268,30 @@ export default function AdminDashboard() {
             <CardTitle>Recent Bookings (Dynamic Table)</CardTitle>
           </CardHeader>
           <CardContent>
+            <div className="mb-4 grid gap-3 sm:grid-cols-2">
+              <input
+                type="text"
+                value={bookingSearch}
+                onChange={(e) => setBookingSearch(e.target.value)}
+                placeholder="Search by student or tutor"
+                className="h-10 rounded-md border bg-background px-3 text-sm"
+                aria-label="Search recent bookings"
+              />
+              <select
+                value={bookingStatusFilter}
+                onChange={(e) => setBookingStatusFilter(e.target.value)}
+                className="h-10 rounded-md border bg-background px-3 text-sm"
+                aria-label="Filter recent bookings by status"
+              >
+                <option value="all">All statuses</option>
+                {Array.from(new Set((stats.recentBookings || []).map((b: any) => String(b.status || "unknown").toLowerCase()))).map((status: string) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -265,7 +303,7 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(stats.recentBookings || []).map((booking: any) => (
+                  {filteredRecentBookings.map((booking: any) => (
                     <tr key={booking.id} className="border-b last:border-0">
                       <td className="py-2 pr-3">{booking.student?.name || "N/A"}</td>
                       <td className="py-2 pr-3">{booking.tutor?.user?.name || "N/A"}</td>
@@ -283,8 +321,8 @@ export default function AdminDashboard() {
                   ))}
                 </tbody>
               </table>
-              {(!stats.recentBookings || stats.recentBookings.length === 0) && (
-                <p className="py-4 text-center text-muted-foreground">No recent bookings found.</p>
+              {filteredRecentBookings.length === 0 && (
+                <p className="py-4 text-center text-muted-foreground">No recent bookings match the selected filters.</p>
               )}
             </div>
           </CardContent>
