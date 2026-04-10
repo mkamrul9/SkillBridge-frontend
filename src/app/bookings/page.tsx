@@ -109,6 +109,15 @@ export default function BookingsPage() {
     return otherParty.includes(search) || status.includes(search);
   });
 
+  const getStatusBadgeClass = (status: string) => {
+    const normalized = String(status || "").toLowerCase();
+    if (normalized === "completed") return "bg-emerald-100 text-emerald-700 border-emerald-300";
+    if (normalized === "confirmed") return "bg-blue-100 text-blue-700 border-blue-300";
+    if (normalized === "pending") return "bg-amber-100 text-amber-700 border-amber-300";
+    if (normalized === "cancelled") return "bg-rose-100 text-rose-700 border-rose-300";
+    return "bg-muted text-muted-foreground border-border";
+  };
+
   return (
     <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-6">
@@ -176,7 +185,10 @@ export default function BookingsPage() {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
                         <div className="md:col-span-2 flex flex-col gap-2">
                           <div>
-                            <span className="font-medium">Status:</span> {booking.status}
+                            <span className="font-medium">Status:</span>{" "}
+                            <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium capitalize ${getStatusBadgeClass(booking.status)}`}>
+                              {booking.status}
+                            </span>
                           </div>
                           <div>
                             <span className="font-medium">Start:</span> {new Date(booking.startTime).toLocaleString()}
@@ -227,7 +239,10 @@ export default function BookingsPage() {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
                         <div className="md:col-span-2 flex flex-col gap-2">
                           <div>
-                            <span className="font-medium">Status:</span> {booking.status}
+                            <span className="font-medium">Status:</span>{" "}
+                            <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium capitalize ${getStatusBadgeClass(booking.status)}`}>
+                              {booking.status}
+                            </span>
                           </div>
                           <div>
                             <span className="font-medium">Start:</span> {new Date(booking.startTime).toLocaleString()}
