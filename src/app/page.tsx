@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import FeaturedTutorsSection from "@/components/featured-tutors-section";
+import { toast } from "sonner";
 
 const heroSlides = [
   {
@@ -37,6 +38,7 @@ const heroSlides = [
 
 export default function HomePage() {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [newsletterEmail, setNewsletterEmail] = useState("");
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -47,6 +49,25 @@ export default function HomePage() {
   }, []);
 
   const slide = heroSlides[activeSlide];
+
+  const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const email = newsletterEmail.trim();
+
+    if (!email) {
+      toast.error("Please enter your email address.");
+      return;
+    }
+
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!isValidEmail) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    toast.success("Subscribed successfully. We will send updates soon.");
+    setNewsletterEmail("");
+  };
 
   return (
     <main className="min-h-screen bg-background">
@@ -227,14 +248,17 @@ export default function HomePage() {
           <p className="mx-auto mt-3 max-w-2xl text-slate-300">
             Get tutor highlights, platform updates, and learning resources delivered to your inbox.
           </p>
-          <div className="mx-auto mt-6 flex max-w-xl flex-col gap-3 sm:flex-row">
+          <form onSubmit={handleNewsletterSubmit} className="mx-auto mt-6 flex max-w-xl flex-col gap-3 sm:flex-row">
             <input
               type="email"
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
               placeholder="Enter your email"
+              aria-label="Email for newsletter"
               className="h-11 flex-1 rounded-md border border-slate-700 bg-slate-900 px-4 text-sm text-white placeholder:text-slate-400"
             />
-            <Button className="h-11 bg-cyan-400 text-slate-950 hover:bg-cyan-300">Subscribe</Button>
-          </div>
+            <Button type="submit" className="h-11 bg-cyan-400 text-slate-950 hover:bg-cyan-300">Subscribe</Button>
+          </form>
         </div>
       </section>
 
