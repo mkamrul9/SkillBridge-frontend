@@ -43,6 +43,7 @@ function BookingsPageSkeleton() {
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useUser();
 
   useEffect(() => {
@@ -82,10 +83,50 @@ export default function BookingsPage() {
   const pastBookings = bookings.filter(b => new Date(b.startTime) <= now);
   const completedBookings = bookings.filter((b) => b.status === "completed");
 
+  const search = searchQuery.trim().toLowerCase();
+  const filteredUpcomingBookings = upcomingBookings.filter((booking) => {
+    if (!search) return true;
+    const otherParty = (
+      booking.tutor?.user?.name ||
+      booking.student?.name ||
+      booking.tutor?.user?.email ||
+      booking.student?.email ||
+      ""
+    ).toLowerCase();
+    const status = String(booking.status || "").toLowerCase();
+    return otherParty.includes(search) || status.includes(search);
+  });
+  const filteredPastBookings = pastBookings.filter((booking) => {
+    if (!search) return true;
+    const otherParty = (
+      booking.tutor?.user?.name ||
+      booking.student?.name ||
+      booking.tutor?.user?.email ||
+      booking.student?.email ||
+      ""
+    ).toLowerCase();
+    const status = String(booking.status || "").toLowerCase();
+    return otherParty.includes(search) || status.includes(search);
+  });
+
   return (
     <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-6">
         <h1 className="text-3xl font-bold">My Bookings</h1>
+
+        <div className="rounded-lg border p-4">
+          <label htmlFor="booking-search" className="mb-2 block text-sm font-medium">
+            Search bookings
+          </label>
+          <input
+            id="booking-search"
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by person name, email, or status"
+            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+          />
+        </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
@@ -116,11 +157,11 @@ export default function BookingsPage() {
         
         {/* Upcoming Bookings */}
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-primary">📅 Upcoming Bookings ({upcomingBookings.length})</h2>
-          {upcomingBookings.length === 0 ? (
+          <h2 className="text-2xl font-semibold text-primary">📅 Upcoming Bookings ({filteredUpcomingBookings.length})</h2>
+          {filteredUpcomingBookings.length === 0 ? (
             <p className="text-muted-foreground">No upcoming bookings</p>
           ) : (
-            upcomingBookings.map((booking) => {
+            filteredUpcomingBookings.map((booking) => {
               const otherParty = booking.tutor?.user?.name || booking.student?.name || booking.tutor?.user?.email || booking.student?.email;
               // Admin can delete any booking
               const canDelete = user?.role === "ADMIN";
@@ -169,11 +210,11 @@ export default function BookingsPage() {
 
         {/* Past Bookings */}
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-muted-foreground">📋 Past Bookings ({pastBookings.length})</h2>
-          {pastBookings.length === 0 ? (
+          <h2 className="text-2xl font-semibold text-muted-foreground">📋 Past Bookings ({filteredPastBookings.length})</h2>
+          {filteredPastBookings.length === 0 ? (
             <p className="text-muted-foreground">No past bookings</p>
           ) : (
-            pastBookings.map((booking) => {
+            filteredPastBookings.map((booking) => {
               const otherParty = booking.tutor?.user?.name || booking.student?.name || booking.tutor?.user?.email || booking.student?.email;
               const canDelete = user?.role === "ADMIN";
               const canReview = user?.role === "STUDENT" && booking.status === "completed" && !booking.reviewedByStudent;
