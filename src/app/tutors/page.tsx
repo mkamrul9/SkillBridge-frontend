@@ -170,6 +170,7 @@ export default function TutorsPage() {
           className="mb-4 px-4 py-2 border rounded text-sm hover:bg-muted"
           type="button"
           onClick={() => window.history.back()}
+          aria-label="Go back to previous page"
         >
           Back
         </button>
@@ -184,8 +185,9 @@ export default function TutorsPage() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Search</label>
+                <label htmlFor="tutor-search" className="text-sm font-medium">Search</label>
                 <Input
+                  id="tutor-search"
                   type="text"
                   placeholder="Search by tutor name, email, or bio"
                   value={searchQuery}
@@ -195,9 +197,9 @@ export default function TutorsPage() {
 
               {/* Category Filter */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Category</label>
+                <label htmlFor="tutor-category" className="text-sm font-medium">Category</label>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger>
+                  <SelectTrigger id="tutor-category" aria-label="Filter tutors by category">
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
@@ -213,9 +215,9 @@ export default function TutorsPage() {
 
               {/* Min Rating Filter */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Minimum Rating</label>
+                <label htmlFor="tutor-min-rating" className="text-sm font-medium">Minimum Rating</label>
                 <Select value={minRating} onValueChange={setMinRating}>
-                  <SelectTrigger>
+                  <SelectTrigger id="tutor-min-rating" aria-label="Filter tutors by minimum rating">
                     <SelectValue placeholder="Any Rating" />
                   </SelectTrigger>
                   <SelectContent>
@@ -230,8 +232,9 @@ export default function TutorsPage() {
 
               {/* Min Price Filter */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Min Price ($/hr)</label>
+                <label htmlFor="tutor-min-price" className="text-sm font-medium">Min Price ($/hr)</label>
                 <Input
+                  id="tutor-min-price"
                   type="number"
                   placeholder="0"
                   value={minPrice}
@@ -243,8 +246,9 @@ export default function TutorsPage() {
 
               {/* Max Price Filter */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Max Price ($/hr)</label>
+                <label htmlFor="tutor-max-price" className="text-sm font-medium">Max Price ($/hr)</label>
                 <Input
+                  id="tutor-max-price"
                   type="number"
                   placeholder="1000"
                   value={maxPrice}
@@ -255,9 +259,9 @@ export default function TutorsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Sort By</label>
+                <label htmlFor="tutor-sort-by" className="text-sm font-medium">Sort By</label>
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger>
+                  <SelectTrigger id="tutor-sort-by" aria-label="Sort tutors by field">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
@@ -271,9 +275,9 @@ export default function TutorsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Sort Order</label>
+                <label htmlFor="tutor-sort-order" className="text-sm font-medium">Sort Order</label>
                 <Select value={sortOrder} onValueChange={setSortOrder}>
-                  <SelectTrigger>
+                  <SelectTrigger id="tutor-sort-order" aria-label="Choose tutor sort order">
                     <SelectValue placeholder="Order" />
                   </SelectTrigger>
                   <SelectContent>
@@ -297,7 +301,7 @@ export default function TutorsPage() {
         </Card>
 
         {/* Results Count */}
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground" aria-live="polite" role="status">
           Found {totalResults} tutor{totalResults !== 1 ? "s" : ""}
         </p>
 
@@ -362,7 +366,7 @@ export default function TutorsPage() {
           >
             Previous
           </Button>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground" aria-live="polite" role="status">
             Page {currentPage} of {totalPages}
           </p>
           <Button
