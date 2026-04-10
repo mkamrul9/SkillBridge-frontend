@@ -7,6 +7,23 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { getApiBaseUrl } from "@/lib/api-url";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+const CHART_COLORS = ["#0ea5e9", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#14b8a6"];
 
 function AdminDashboardSkeleton() {
   return (
@@ -85,6 +102,21 @@ export default function AdminDashboard() {
   if (loading) return <AdminDashboardSkeleton />;
   if (!stats) return <div className="flex min-h-screen items-center justify-center">No data</div>;
 
+  const usersByRoleChartData = (stats.usersByRole || []).map((item: any) => ({
+    role: item.role,
+    count: item._count.role,
+  }));
+
+  const bookingsByStatusChartData = (stats.bookingsByStatus || []).map((item: any) => ({
+    status: item.status,
+    count: item._count.status,
+  }));
+
+  const trendData = bookingsByStatusChartData.map((item: any, index: number) => ({
+    label: `${index + 1}. ${item.status}`,
+    value: item.count,
+  }));
+
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 py-16">
       <div className="mx-auto max-w-6xl space-y-8">
@@ -144,32 +176,116 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Users by Role</CardTitle>
+            <CardTitle>Users by Role (Bar)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {stats.usersByRole.map((item: any) => (
-                <div key={item.role} className="flex justify-between">
-                  <span className="capitalize">{item.role.toLowerCase()}</span>
-                  <span className="font-semibold">{item._count.role}</span>
-                </div>
-              ))}
+            <div className="h-72 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={usersByRoleChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="role" />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="count" name="Users" radius={[6, 6, 0, 0]}>
+                    {usersByRoleChartData.map((_: any, index: number) => (
+                      <Cell key={`users-bar-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
 
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Bookings by Status (Pie)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-72 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={bookingsByStatusChartData}
+                      dataKey="count"
+                      nameKey="status"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      label
+                    >
+                      {bookingsByStatusChartData.map((_: any, index: number) => (
+                        <Cell key={`booking-pie-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Booking Status Trend (Line)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-72 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={trendData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="label" />
+                    <YAxis allowDecimals={false} />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="value" name="Bookings" stroke="#0ea5e9" strokeWidth={3} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         <Card>
           <CardHeader>
-            <CardTitle>Bookings by Status</CardTitle>
+            <CardTitle>Recent Bookings (Dynamic Table)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {stats.bookingsByStatus.map((item: any) => (
-                <div key={item.status} className="flex justify-between">
-                  <span className="capitalize">{item.status}</span>
-                  <span className="font-semibold">{item._count.status}</span>
-                </div>
-              ))}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-left">
+                    <th className="py-2 pr-3 font-medium">Student</th>
+                    <th className="py-2 pr-3 font-medium">Tutor</th>
+                    <th className="py-2 pr-3 font-medium">Status</th>
+                    <th className="py-2 pr-3 font-medium">Created</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(stats.recentBookings || []).map((booking: any) => (
+                    <tr key={booking.id} className="border-b last:border-0">
+                      <td className="py-2 pr-3">{booking.student?.name || "N/A"}</td>
+                      <td className="py-2 pr-3">{booking.tutor?.user?.name || "N/A"}</td>
+                      <td className="py-2 pr-3">
+                        <span className="rounded-full bg-primary/10 px-2 py-1 text-xs capitalize">
+                          {booking.status || "unknown"}
+                        </span>
+                      </td>
+                      <td className="py-2 pr-3">
+                        {booking.createdAt
+                          ? new Date(booking.createdAt).toLocaleDateString()
+                          : "N/A"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {(!stats.recentBookings || stats.recentBookings.length === 0) && (
+                <p className="py-4 text-center text-muted-foreground">No recent bookings found.</p>
+              )}
             </div>
           </CardContent>
         </Card>
