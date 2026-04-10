@@ -3,8 +3,10 @@ import Link from "next/link";
 import { useUser } from "@/lib/user-context";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const navConfig = {
   common: [
@@ -37,6 +39,14 @@ const navConfig = {
 export function Navbar() {
   const { user, setUser } = useUser();
   const pathname = usePathname();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = (theme || resolvedTheme) === "dark";
 
   const handleSignOut = async () => {
     try {
@@ -75,14 +85,34 @@ export function Navbar() {
         </div>
 
         {/* User info / avatar for desktop */}
-        <div className="hidden sm:flex items-center ml-4">
+        <div className="hidden sm:flex items-center gap-2 ml-4">
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            aria-label="Toggle theme"
+            onClick={() => setTheme(isDark ? "light" : "dark")}
+            disabled={!mounted}
+          >
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
           {user ? (
             <DesktopUserMenu user={user} onSignOut={handleSignOut} />
           ) : null}
         </div>
 
         {/* Mobile menu button */}
-        <div className="sm:hidden ml-auto">
+        <div className="sm:hidden ml-auto flex items-center gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            aria-label="Toggle theme"
+            onClick={() => setTheme(isDark ? "light" : "dark")}
+            disabled={!mounted}
+          >
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
           <MobileMenu
             uniqueLinks={uniqueLinks}
             pathname={pathname}

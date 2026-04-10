@@ -6,6 +6,7 @@ import { Navbar } from "@/components/navbar";
 import Footer from "@/components/footer";
 import { UserProvider } from "@/lib/user-context";
 import ResponsiveContainer from "@/components/ResponsiveContainer";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "SkillBridge",
@@ -20,13 +21,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <UserProvider>
-          <Navbar />
-          <ResponsiveContainer>
-            {children}
-          </ResponsiveContainer>
-          <Footer />
-        </UserProvider>
+        <ThemeProvider>
+          <UserProvider>
+            <Navbar />
+            <ResponsiveContainer>
+              {children}
+            </ResponsiveContainer>
+            <Footer />
+          </UserProvider>
+        </ThemeProvider>
         <Toaster richColors position="top-right" />
       </body>
     </html>
