@@ -80,11 +80,39 @@ export default function BookingsPage() {
   const now = new Date();
   const upcomingBookings = bookings.filter(b => new Date(b.startTime) > now);
   const pastBookings = bookings.filter(b => new Date(b.startTime) <= now);
+  const completedBookings = bookings.filter((b) => b.status === "completed");
 
   return (
     <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-6">
         <h1 className="text-3xl font-bold">My Bookings</h1>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-sm text-muted-foreground">Total</p>
+              <p className="text-2xl font-bold">{bookings.length}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-sm text-muted-foreground">Upcoming</p>
+              <p className="text-2xl font-bold text-blue-600">{upcomingBookings.length}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-sm text-muted-foreground">Past</p>
+              <p className="text-2xl font-bold text-amber-600">{pastBookings.length}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-sm text-muted-foreground">Completed</p>
+              <p className="text-2xl font-bold text-emerald-600">{completedBookings.length}</p>
+            </CardContent>
+          </Card>
+        </div>
         
         {/* Upcoming Bookings */}
         <div className="space-y-4">
