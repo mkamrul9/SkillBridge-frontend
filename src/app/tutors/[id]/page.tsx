@@ -6,12 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
 import { getApiBaseUrl } from "@/lib/api-url";
+import Link from "next/link";
 
 export default function TutorDetailsPage() {
   const { user } = useUser();
   const params = useParams();
   const [tutor, setTutor] = useState<any>(null);
   const [bookings, setBookings] = useState<any[]>([]);
+  const [relatedTutors, setRelatedTutors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,6 +26,27 @@ export default function TutorDetailsPage() {
       .then((data) => {
         if (data.success) {
           setTutor(data.data);
+
+          const firstCategoryId = data.data?.categories?.[0]?.id;
+          if (firstCategoryId) {
+            const relatedUrl = base.endsWith("/api")
+              ? `${base}/tutors?categoryId=${firstCategoryId}&limit=4&sortBy=rating&sortOrder=desc`
+              : `${base}/api/tutors?categoryId=${firstCategoryId}&limit=4&sortBy=rating&sortOrder=desc`;
+
+            fetch(relatedUrl, { credentials: "include" })
+              .then((res) => res.json())
+              .then((relatedData) => {
+                if (relatedData?.success) {
+                  const filtered = (relatedData.data || []).filter(
+                    (item: any) => item.id !== data.data.id,
+                  );
+                  setRelatedTutors(filtered.slice(0, 3));
+                }
+              })
+              .catch(() => {
+                setRelatedTutors([]);
+              });
+          }
           
           // Fetch tutor bookings
           const bookingsUrl = base.endsWith("/api") ? `${base}/bookings/tutor/${params.id}` : `${base}/api/bookings/tutor/${params.id}`;
@@ -173,8 +196,8 @@ export default function TutorDetailsPage() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className="font-semibold truncate">{review.student?.name || "Student"}</span>
-                                  <span className="text-yellow-500 text-sm flex-shrink-0">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
-                                  <span className="text-xs text-muted-foreground ml-2 whitespace-nowrap flex-shrink-0">{new Date(review.createdAt).toLocaleDateString()}</span>
+                                  <span className="text-yellow-500 text-sm shrink-0">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
+                                  <span className="ml-2 whitespace-nowrap text-xs text-muted-foreground shrink-0">{new Date(review.createdAt).toLocaleDateString()}</span>
                                 </div>
                               </div>
                               {canDelete && (
@@ -213,6 +236,56 @@ export default function TutorDetailsPage() {
             </div>
           </CardContent>
         </Card>
+
+        <section className="space-y-4 pt-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-bold">Suggested Tutors</h3>
+            <Link href="/tutors" className="text-sm text-primary hover:underline">
+              View all
+            </Link>
+          </div>
+
+          {relatedTutors.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {relatedTutors.map((item: any) => {
+                const relatedAvgRating = item.reviews?.length
+                  ? (
+                      item.reviews.reduce((sum: number, r: any) => sum + r.rating, 0) /
+                      item.reviews.length
+                    ).toFixed(1)
+                  : "N/A";
+
+                return (
+                  <Card key={item.id} className="h-full">
+                    <CardHeader>
+                      <CardTitle className="text-lg">{item.user?.name || "Tutor"}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <p className="line-clamp-2 text-sm text-muted-foreground">{item.bio || "No bio provided"}</p>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-medium">${item.hourlyRate}/hr</span>
+                        <span>⭐ {relatedAvgRating}</span>
+                      </div>
+                      <div className="pt-1">
+                        <Link href={`/tutors/${item.id}`}>
+                          <button className="w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+                            View Details
+                          </button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="py-6 text-sm text-muted-foreground">
+                No suggested tutors available right now.
+              </CardContent>
+            </Card>
+          )}
+        </section>
       </div>
     </div>
   );
