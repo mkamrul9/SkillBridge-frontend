@@ -72,6 +72,21 @@ export default function FeaturedTutorsSection() {
           </div>
         ))}
       </div>
+      {!loading && tutors.length === 0 && !error && (
+        <div className="mt-8 rounded-lg border bg-muted/40 px-6 py-8">
+          <p className="text-sm text-muted-foreground">No featured tutors are available right now.</p>
+          <Link href="/tutors" className="mt-4 inline-block">
+            <Button variant="outline">Browse All Tutors</Button>
+          </Link>
+        </div>
+      )}
+      {!loading && tutors.length > 0 && (
+        <div className="mt-8">
+          <Link href="/tutors">
+            <Button variant="outline">Browse All Tutors</Button>
+          </Link>
+        </div>
+      )}
     </section>
   );
 }
