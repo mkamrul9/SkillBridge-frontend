@@ -8,6 +8,6 @@ export default function ResponsiveContainer({
   className?: string;
 }) {
   return (
-    <div className={`mx-auto max-w-7xl px-4 sm:px-6 ${className}`}>{children}</div>
+    <div className={`w-full max-w-none ${className}`}>{children}</div>
   );
 }
