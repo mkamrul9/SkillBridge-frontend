@@ -9,6 +9,51 @@ import { getApiBaseUrl } from "@/lib/api-url";
 import Link from "next/link";
 import Image from "next/image";
 import { DEFAULT_AVATAR } from "@/lib/default-avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function TutorDetailsSkeleton() {
+  return (
+    <div className="min-h-screen bg-background px-4 py-16 sm:px-6">
+      <div className="mx-auto max-w-4xl space-y-6">
+        <div className="flex gap-3">
+          <Skeleton className="h-10 w-24" />
+          <Skeleton className="h-10 w-40" />
+        </div>
+
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-8 w-48" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 rounded-lg border p-4 sm:grid-cols-[140px,1fr]">
+              <Skeleton className="h-30 w-30 rounded-xl" />
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-32" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <div key={`tutor-stat-skeleton-${idx}`} className="space-y-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-6 w-32" />
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5 w-5/6" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
 
 export default function TutorDetailsPage() {
   const { user } = useUser();
@@ -79,7 +124,7 @@ export default function TutorDetailsPage() {
     return data;
   };
 
-  if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+  if (loading) return <TutorDetailsSkeleton />;
   if (!tutor) return <div className="flex min-h-screen items-center justify-center">Tutor not found</div>;
 
   const avgRating = tutor.reviews?.length
