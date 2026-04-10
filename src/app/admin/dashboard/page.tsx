@@ -244,6 +244,47 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-left">
+                    <th className="py-2 pr-3 font-medium">Name</th>
+                    <th className="py-2 pr-3 font-medium">Email</th>
+                    <th className="py-2 pr-3 font-medium">Role</th>
+                    <th className="py-2 pr-3 font-medium">Joined</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(stats.recentUsers || []).map((user: any) => (
+                    <tr key={user.id} className="border-b last:border-0">
+                      <td className="py-2 pr-3">{user.name || "N/A"}</td>
+                      <td className="py-2 pr-3">{user.email || "N/A"}</td>
+                      <td className="py-2 pr-3">
+                        <span className="rounded-full bg-primary/10 px-2 py-1 text-xs">
+                          {user.role || "unknown"}
+                        </span>
+                      </td>
+                      <td className="py-2 pr-3">
+                        {user.createdAt
+                          ? new Date(user.createdAt).toLocaleDateString()
+                          : "N/A"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {(!stats.recentUsers || stats.recentUsers.length === 0) && (
+                <p className="py-4 text-center text-muted-foreground">No recent users found.</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="grid gap-4 lg:grid-cols-2">
           <Card>
             <CardHeader>
