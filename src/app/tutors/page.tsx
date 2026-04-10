@@ -13,12 +13,18 @@ export default function TutorsPage() {
   const [tutors, setTutors] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
   
   // Filter states
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [minRating, setMinRating] = useState<string>("all");
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("newest");
+  const [sortOrder, setSortOrder] = useState<string>("desc");
 
   useEffect(() => {
     const base = getApiBaseUrl();
@@ -32,10 +38,10 @@ export default function TutorsPage() {
       .catch(() => console.error("Failed to load categories"));
     
     // Fetch all tutors initially
-    fetchTutors();
+    fetchTutors({}, 1);
   }, []);
 
-  const fetchTutors = (filters = {}) => {
+  const fetchTutors = (filters = {}, page = 1) => {
     const base = getApiBaseUrl();
     const url = base.endsWith("/api") ? `${base}/tutors` : `${base}/api/tutors`;
     
@@ -45,13 +51,19 @@ export default function TutorsPage() {
       if (value) params.append(key, value as string);
     });
     
-    const fetchUrl = params.toString() ? `${url}?${params.toString()}` : url;
+    params.append("page", page.toString());
+    params.append("limit", "9");
+
+    const fetchUrl = `${url}?${params.toString()}`;
     
     fetch(fetchUrl, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
           setTutors(data.data);
+          setCurrentPage(data.pagination?.page || page);
+          setTotalPages(data.pagination?.totalPages || 1);
+          setTotalResults(data.pagination?.total || data.data.length || 0);
         } else {
           toast.error("Failed to load tutors");
         }
@@ -60,24 +72,42 @@ export default function TutorsPage() {
       .finally(() => setLoading(false));
   };
 
-  const handleApplyFilters = () => {
+  const getCurrentFilters = () => {
     const filters: any = {};
+    if (searchQuery.trim()) filters.search = searchQuery.trim();
     if (selectedCategory && selectedCategory !== 'all') filters.categoryId = selectedCategory;
     if (minRating && minRating !== 'all') filters.minRating = minRating;
     if (minPrice) filters.minRate = minPrice;
     if (maxPrice) filters.maxRate = maxPrice;
+    if (sortBy) filters.sortBy = sortBy;
+    if (sortOrder) filters.sortOrder = sortOrder;
+
+    return filters;
+  };
+
+  const handleApplyFilters = () => {
+    const filters = getCurrentFilters();
     
     setLoading(true);
-    fetchTutors(filters);
+    fetchTutors(filters, 1);
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages || page === currentPage) return;
+    setLoading(true);
+    fetchTutors(getCurrentFilters(), page);
   };
 
   const handleClearFilters = () => {
+    setSearchQuery("");
     setSelectedCategory("all");
     setMinRating("all");
     setMinPrice("");
     setMaxPrice("");
+    setSortBy("newest");
+    setSortOrder("desc");
     setLoading(true);
-    fetchTutors();
+    fetchTutors({}, 1);
   };
 
   if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
@@ -102,6 +132,16 @@ export default function TutorsPage() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Search</label>
+                <Input
+                  type="text"
+                  placeholder="Search by tutor name, email, or bio"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+
               {/* Category Filter */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Category</label>
@@ -163,6 +203,35 @@ export default function TutorsPage() {
                 />
               </div>
 
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Sort By</label>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="newest">Newest</SelectItem>
+                    <SelectItem value="name">Name</SelectItem>
+                    <SelectItem value="price">Price</SelectItem>
+                    <SelectItem value="experience">Experience</SelectItem>
+                    <SelectItem value="rating">Rating</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Sort Order</label>
+                <Select value={sortOrder} onValueChange={setSortOrder}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Order" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="desc">Descending</SelectItem>
+                    <SelectItem value="asc">Ascending</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Filter Buttons */}
               <div className="flex items-end gap-2">
                 <Button onClick={handleApplyFilters} className="flex-1">
@@ -178,7 +247,7 @@ export default function TutorsPage() {
 
         {/* Results Count */}
         <p className="text-sm text-muted-foreground">
-          Found {tutors.length} tutor{tutors.length !== 1 ? "s" : ""}
+          Found {totalResults} tutor{totalResults !== 1 ? "s" : ""}
         </p>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -221,6 +290,36 @@ export default function TutorsPage() {
               </Link>
             );
           })}
+        </div>
+
+        {tutors.length === 0 && (
+          <Card>
+            <CardContent className="py-10 text-center text-muted-foreground">
+              No tutors found for the selected filters.
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="flex items-center justify-between gap-3 border-t pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={currentPage <= 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            Previous
+          </Button>
+          <p className="text-sm text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={currentPage >= totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            Next
+          </Button>
         </div>
       </div>
     </div>
