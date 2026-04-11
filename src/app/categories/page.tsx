@@ -45,39 +45,56 @@ export default function CategoriesPage() {
   return (
     <div className="sb-page">
       <div className="sb-container">
-      <div className="sb-header mb-4">
-        <h1 className="sb-title">Categories</h1>
-        {user?.role === "ADMIN" && (
-          <Button onClick={() => router.push("/categories/create")}>Create Category</Button>
-        )}
-      </div>
-      <Card className="border-border/80 bg-card/95">
-        <CardHeader>
-          <CardTitle>Categories</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {categories.length === 0 ? (
-            <div className="text-muted-foreground">No categories found.</div>
-          ) : (
-            <ul className="space-y-2">
-              {categories.map((cat) => (
-                <li key={cat.id} className="border-b last:border-b-0 py-2 text-base flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">{cat.name}</div>
-                    {cat.description && <div className="text-sm text-muted-foreground">{cat.description}</div>}
+        <section className="sb-hero">
+          <div className="sb-header">
+            <div className="space-y-2">
+              <span className="sb-pill">Learning Catalog</span>
+              <h1 className="sb-title">Categories</h1>
+              <p className="sb-subtle">Discover and manage learning areas available on the platform.</p>
+            </div>
+            {user?.role === "ADMIN" && (
+              <Button onClick={() => router.push("/categories/create")}>Create Category</Button>
+            )}
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <Card className="bg-card/95">
+              <CardContent className="pt-6">
+                <p className="sb-subtle">Total Categories</p>
+                <p className="text-2xl font-bold">{categories.length}</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-card/95 sm:col-span-2">
+              <CardContent className="pt-6">
+                <p className="sb-subtle">Tip</p>
+                <p className="text-sm text-foreground/90">Use clear names and short descriptions so students can find the right tutors faster.</p>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {categories.map((cat) => (
+            <Card key={cat.id} className="border-border/80 bg-card/95">
+              <CardHeader>
+                <CardTitle className="text-xl">{cat.name}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">{cat.description || "No description provided."}</p>
+                {user?.role === "ADMIN" && (
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" className="flex-1" onClick={() => router.push(`/categories/edit/${cat.id}`)}>Edit</Button>
+                    <Button size="sm" variant="destructive" className="flex-1" onClick={() => handleDelete(cat.id)}>Delete</Button>
                   </div>
-                  {user?.role === "ADMIN" && (
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => router.push(`/categories/edit/${cat.id}`)}>Edit</Button>
-                      <Button size="sm" variant="destructive" onClick={() => handleDelete(cat.id)}>Delete</Button>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        {categories.length === 0 && (
+          <Card className="border-border/80 bg-card/95">
+            <CardContent className="py-8 text-center text-muted-foreground">No categories found.</CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
