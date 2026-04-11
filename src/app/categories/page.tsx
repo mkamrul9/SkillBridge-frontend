@@ -12,6 +12,8 @@ export default function CategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 9;
   const { user } = useUser();
   const router = useRouter();
   const { confirm } = useConfirm();
@@ -50,6 +52,10 @@ export default function CategoriesPage() {
   if (loading) return <div className="flex justify-center items-center min-h-50">Loading...</div>;
   if (error) return <div className="text-red-500 text-center">Error: {error}</div>;
 
+  const totalPages = Math.max(1, Math.ceil(categories.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pagedCategories = categories.slice((safePage - 1) * pageSize, safePage * pageSize);
+
   return (
     <div className="sb-page">
       <div className="sb-container">
@@ -81,7 +87,7 @@ export default function CategoriesPage() {
         </section>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((cat) => (
+          {pagedCategories.map((cat) => (
             <Card key={cat.id} className="border-border/80 bg-card/95">
               <CardHeader>
                 <CardTitle className="text-xl">{cat.name}</CardTitle>
@@ -97,6 +103,13 @@ export default function CategoriesPage() {
               </CardContent>
             </Card>
           ))}
+        </div>
+        <div className="flex flex-col items-center justify-between gap-3 rounded-xl border bg-card/80 px-4 py-3 sm:flex-row">
+          <p className="text-sm text-muted-foreground">Page {safePage} of {totalPages}</p>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" disabled={safePage <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Previous</Button>
+            <Button variant="outline" size="sm" disabled={safePage >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>Next</Button>
+          </div>
         </div>
         {categories.length === 0 && (
           <Card className="border-border/80 bg-card/95">

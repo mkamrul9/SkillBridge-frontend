@@ -8,6 +8,8 @@ export default function AdminCategoriesPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
   const { confirm } = useConfirm();
 
   const load = () => getAllCategories().then(setCategories).catch(e => setError(e.message));
@@ -35,29 +37,38 @@ export default function AdminCategoriesPage() {
     } catch (e: any) { setError(e.message); }
   };
 
+  const totalPages = Math.max(1, Math.ceil(categories.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pagedCategories = categories.slice((safePage - 1) * pageSize, safePage * pageSize);
+
   return (
     <div>
       <h1>Admin: Categories</h1>
-      {error && <div style={{color:'red'}}>{error}</div>}
+      {error && <div style={{ color: 'red' }}>{error}</div>}
       <ul>
-        {categories.map(cat => (
+        {pagedCategories.map(cat => (
           <li key={cat.id}>
             {editId === cat.id ? (
               <>
-                <input value={editName} onChange={e=>setEditName(e.target.value)} />
-                <button onClick={()=>handleUpdate(cat.id)}>Save</button>
-                <button onClick={()=>{setEditId(null);setEditName("")}}>Cancel</button>
+                <input value={editName} onChange={e => setEditName(e.target.value)} />
+                <button onClick={() => handleUpdate(cat.id)}>Save</button>
+                <button onClick={() => { setEditId(null); setEditName("") }}>Cancel</button>
               </>
             ) : (
               <>
                 {cat.name}
-                <button onClick={()=>{setEditId(cat.id);setEditName(cat.name)}}>Edit</button>
-                <button onClick={()=>handleDelete(cat.id)}>Delete</button>
+                <button onClick={() => { setEditId(cat.id); setEditName(cat.name) }}>Edit</button>
+                <button onClick={() => handleDelete(cat.id)}>Delete</button>
               </>
             )}
           </li>
         ))}
       </ul>
+      <div style={{ display: "flex", gap: "8px", marginTop: "12px", alignItems: "center" }}>
+        <span>Page {safePage} of {totalPages}</span>
+        <button disabled={safePage <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Previous</button>
+        <button disabled={safePage >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>Next</button>
+      </div>
     </div>
   );
 }

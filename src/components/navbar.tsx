@@ -5,7 +5,17 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { Moon, Sun } from "lucide-react";
+import {
+  BookOpenCheck,
+  Briefcase,
+  Grid3X3,
+  LayoutDashboard,
+  Moon,
+  Shield,
+  Sun,
+  User,
+  Users,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 
 const navConfig = {
@@ -16,6 +26,36 @@ const navConfig = {
     { href: "/tutors", label: "Tutors" },
     { href: "/help", label: "Help" },
   ],
+};
+
+const getRoleQuickLinks = (role?: string) => {
+  if (role === "ADMIN") {
+    return [
+      { href: "/admin/dashboard", label: "Admin Dashboard", icon: LayoutDashboard },
+      { href: "/admin/users", label: "Manage Users", icon: Users },
+      { href: "/categories", label: "Categories", icon: Grid3X3 },
+      { href: "/reviews/all", label: "All Reviews", icon: BookOpenCheck },
+      { href: "/bookings/all", label: "All Bookings", icon: Briefcase },
+      { href: "/profile", label: "My Profile", icon: User },
+    ];
+  }
+
+  if (role === "TUTOR") {
+    return [
+      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/bookings", label: "My Bookings", icon: Briefcase },
+      { href: "/reviews", label: "My Reviews", icon: BookOpenCheck },
+      { href: "/profile", label: "My Profile", icon: User },
+    ];
+  }
+
+  return [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/bookings", label: "My Bookings", icon: Briefcase },
+    { href: "/reviews", label: "My Reviews", icon: BookOpenCheck },
+    { href: "/tutors/become-tutor", label: "Become a Tutor", icon: Shield },
+    { href: "/profile", label: "My Profile", icon: User },
+  ];
 };
 
 export function Navbar() {
@@ -104,22 +144,7 @@ export function Navbar() {
 
 function DesktopUserMenu({ user, onSignOut }: any) {
   const [open, setOpen] = useState(false);
-
-  const quickLinks =
-    user.role === "ADMIN"
-      ? [
-        { href: "/admin/dashboard", label: "Admin Dashboard" },
-        { href: "/profile", label: "My Profile" },
-      ]
-      : user.role === "TUTOR"
-        ? [
-          { href: "/dashboard", label: "Dashboard" },
-          { href: "/profile", label: "My Profile" },
-        ]
-        : [
-          { href: "/bookings", label: "My Bookings" },
-          { href: "/profile", label: "My Profile" },
-        ];
+  const quickLinks = getRoleQuickLinks(user?.role);
 
   return (
     <div className="relative">
@@ -143,16 +168,20 @@ function DesktopUserMenu({ user, onSignOut }: any) {
             Signed in as {user.email}
           </div>
           <div className="py-1">
-            {quickLinks.map((item) => (
+            {quickLinks.map((item) => {
+              const Icon = item.icon;
+              return (
               <Link
                 key={item.href}
                 href={item.href}
-                className="block rounded px-2 py-2 text-sm hover:bg-muted"
+                className="flex items-center gap-2 rounded px-2 py-2 text-sm hover:bg-muted"
                 onClick={() => setOpen(false)}
               >
+                <Icon className="h-4 w-4 text-muted-foreground" />
                 {item.label}
               </Link>
-            ))}
+              );
+            })}
           </div>
           <button
             type="button"
@@ -172,6 +201,7 @@ function DesktopUserMenu({ user, onSignOut }: any) {
 
 function MobileMenu({ uniqueLinks, pathname, user, onSignOut }: any) {
   const [open, setOpen] = useState(false);
+  const quickLinks = getRoleQuickLinks(user?.role);
 
   return (
     <div className="relative">
@@ -209,6 +239,22 @@ function MobileMenu({ uniqueLinks, pathname, user, onSignOut }: any) {
                 <div className="mt-2 px-3 py-2 border-t text-sm">
                   <div className="font-semibold">{user.name}</div>
                   <div className="text-muted-foreground">{user.role}</div>
+                </div>
+                <div className="mt-1 flex flex-col gap-1 px-1">
+                  {quickLinks.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={`mobile-role-${item.href}`}
+                        href={item.href}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 rounded px-2 py-2 text-sm hover:bg-muted"
+                      >
+                        <Icon className="h-4 w-4 text-muted-foreground" />
+                        {item.label}
+                      </Link>
+                    );
+                  })}
                 </div>
                 <button
                   className="w-full text-left px-3 py-2 text-sm text-destructive"

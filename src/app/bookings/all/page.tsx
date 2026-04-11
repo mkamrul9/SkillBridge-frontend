@@ -11,6 +11,8 @@ export default function AllBookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 6;
   const { user } = useUser();
   const { confirm } = useConfirm();
 
@@ -62,6 +64,10 @@ export default function AllBookingsPage() {
 
   if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
 
+  const totalPages = Math.max(1, Math.ceil(bookings.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pagedBookings = bookings.slice((safePage - 1) * pageSize, safePage * pageSize);
+
   const getStatusTone = (status: string) => {
     const normalized = String(status || "").toLowerCase();
     if (normalized === "confirmed") return "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300";
@@ -82,7 +88,7 @@ export default function AllBookingsPage() {
           <div className="text-muted-foreground">No bookings found.</div>
         ) : (
           <div className="space-y-4">
-            {bookings.map((booking) => (
+            {pagedBookings.map((booking) => (
               <Card key={booking.id} className="border-border/80 bg-card/95">
                 <CardHeader>
                   <CardTitle className="text-xl">
@@ -117,6 +123,13 @@ export default function AllBookingsPage() {
                 </CardContent>
               </Card>
             ))}
+            <div className="flex flex-col items-center justify-between gap-3 rounded-xl border bg-card/80 px-4 py-3 sm:flex-row">
+              <p className="text-sm text-muted-foreground">Page {safePage} of {totalPages}</p>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" disabled={safePage <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Previous</Button>
+                <Button variant="outline" size="sm" disabled={safePage >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>Next</Button>
+              </div>
+            </div>
           </div>
         )}
       </div>

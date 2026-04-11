@@ -12,6 +12,8 @@ import { useConfirm } from "@/components/confirm-provider";
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const pageSize = 8;
   const { confirm } = useConfirm();
 
   useEffect(() => {
@@ -71,6 +73,10 @@ export default function AdminUsers() {
 
   if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
 
+  const totalPages = Math.max(1, Math.ceil(users.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pagedUsers = users.slice((safePage - 1) * pageSize, safePage * pageSize);
+
   return (
     <div className="sb-page">
       <div className="sb-container">
@@ -82,7 +88,7 @@ export default function AdminUsers() {
         </div>
 
         <div className="grid gap-4">
-          {users.map((user) => (
+          {pagedUsers.map((user) => (
             <Card key={user.id} className="border-border/80 bg-card/95">
               <CardHeader>
                 <CardTitle className="text-lg">{user.name}</CardTitle>
@@ -188,6 +194,13 @@ export default function AdminUsers() {
               </CardContent>
             </Card>
           ))}
+        </div>
+        <div className="flex flex-col items-center justify-between gap-3 rounded-xl border bg-card/80 px-4 py-3 sm:flex-row">
+          <p className="text-sm text-muted-foreground">Page {safePage} of {totalPages}</p>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" disabled={safePage <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Previous</Button>
+            <Button variant="outline" size="sm" disabled={safePage >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>Next</Button>
+          </div>
         </div>
       </div>
     </div>

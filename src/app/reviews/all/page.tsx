@@ -3,11 +3,14 @@ import { useEffect, useState } from "react";
 import { getAllReviews } from "@/lib/review-api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/lib/user-context";
+import { Button } from "@/components/ui/button";
 
 export default function AllReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 8;
   const { user } = useUser();
 
   useEffect(() => {
@@ -24,6 +27,10 @@ export default function AllReviewsPage() {
   if (loading) return <div className="flex min-h-50 items-center justify-center">Loading...</div>;
   if (error) return <div className="text-red-500 text-center">Error: {error}</div>;
 
+  const totalPages = Math.max(1, Math.ceil(reviews.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pagedReviews = reviews.slice((safePage - 1) * pageSize, safePage * pageSize);
+
   return (
     <div className="sb-page">
       <div className="sb-container max-w-5xl">
@@ -36,7 +43,7 @@ export default function AllReviewsPage() {
           <div className="text-muted-foreground">No reviews found.</div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
-            {reviews.map((review) => (
+            {pagedReviews.map((review) => (
               <Card key={review.id} className="border-border/80 bg-card/95">
                 <CardHeader>
                   <CardTitle className="text-lg">{review.student?.name || "Student"}</CardTitle>
@@ -53,6 +60,13 @@ export default function AllReviewsPage() {
             ))}
           </div>
         )}
+        <div className="mt-4 flex flex-col items-center justify-between gap-3 rounded-xl border bg-card/80 px-4 py-3 sm:flex-row">
+          <p className="text-sm text-muted-foreground">Page {safePage} of {totalPages}</p>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" disabled={safePage <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Previous</Button>
+            <Button variant="outline" size="sm" disabled={safePage >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>Next</Button>
+          </div>
+        </div>
       </div>
     </div>
   );

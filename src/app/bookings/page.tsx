@@ -47,6 +47,9 @@ export default function BookingsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [upcomingSortOrder, setUpcomingSortOrder] = useState<"asc" | "desc">("asc");
   const [pastSortOrder, setPastSortOrder] = useState<"asc" | "desc">("desc");
+  const [upcomingPage, setUpcomingPage] = useState(1);
+  const [pastPage, setPastPage] = useState(1);
+  const pageSize = 5;
   const { user } = useUser();
   const { confirm } = useConfirm();
 
@@ -131,6 +134,13 @@ export default function BookingsPage() {
     return pastSortOrder === "asc" ? first - second : second - first;
   });
 
+  const upcomingTotalPages = Math.max(1, Math.ceil(sortedUpcomingBookings.length / pageSize));
+  const pastTotalPages = Math.max(1, Math.ceil(sortedPastBookings.length / pageSize));
+  const safeUpcomingPage = Math.min(upcomingPage, upcomingTotalPages);
+  const safePastPage = Math.min(pastPage, pastTotalPages);
+  const pagedUpcomingBookings = sortedUpcomingBookings.slice((safeUpcomingPage - 1) * pageSize, safeUpcomingPage * pageSize);
+  const pagedPastBookings = sortedPastBookings.slice((safePastPage - 1) * pageSize, safePastPage * pageSize);
+
   const getStatusBadgeClass = (status: string) => {
     const normalized = String(status || "").toLowerCase();
     if (normalized === "completed") return "bg-emerald-100 text-emerald-700 border-emerald-300";
@@ -202,7 +212,7 @@ export default function BookingsPage() {
           {sortedUpcomingBookings.length === 0 ? (
             <p className="text-muted-foreground">No upcoming bookings</p>
           ) : (
-            sortedUpcomingBookings.map((booking) => {
+            pagedUpcomingBookings.map((booking) => {
               const otherParty = booking.tutor?.user?.name || booking.student?.name || booking.tutor?.user?.email || booking.student?.email;
               // Admin can delete any booking
               const canDelete = user?.role === "ADMIN";
@@ -250,6 +260,13 @@ export default function BookingsPage() {
               );
             })
           )}
+          <div className="flex flex-col items-center justify-between gap-3 rounded-xl border bg-card/80 px-4 py-3 sm:flex-row">
+            <p className="text-sm text-muted-foreground">Upcoming page {safeUpcomingPage} of {upcomingTotalPages}</p>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" disabled={safeUpcomingPage <= 1} onClick={() => setUpcomingPage((p) => Math.max(1, p - 1))}>Previous</Button>
+              <Button variant="outline" size="sm" disabled={safeUpcomingPage >= upcomingTotalPages} onClick={() => setUpcomingPage((p) => Math.min(upcomingTotalPages, p + 1))}>Next</Button>
+            </div>
+          </div>
         </div>
 
         {/* Past Bookings */}
@@ -268,7 +285,7 @@ export default function BookingsPage() {
           {sortedPastBookings.length === 0 ? (
             <p className="text-muted-foreground">No past bookings</p>
           ) : (
-            sortedPastBookings.map((booking) => {
+            pagedPastBookings.map((booking) => {
               const otherParty = booking.tutor?.user?.name || booking.student?.name || booking.tutor?.user?.email || booking.student?.email;
               const canDelete = user?.role === "ADMIN";
               const canReview = user?.role === "STUDENT" && booking.status === "completed" && !booking.reviewedByStudent;
@@ -314,6 +331,13 @@ export default function BookingsPage() {
               );
             })
           )}
+          <div className="flex flex-col items-center justify-between gap-3 rounded-xl border bg-card/80 px-4 py-3 sm:flex-row">
+            <p className="text-sm text-muted-foreground">Past page {safePastPage} of {pastTotalPages}</p>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" disabled={safePastPage <= 1} onClick={() => setPastPage((p) => Math.max(1, p - 1))}>Previous</Button>
+              <Button variant="outline" size="sm" disabled={safePastPage >= pastTotalPages} onClick={() => setPastPage((p) => Math.min(pastTotalPages, p + 1))}>Next</Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
