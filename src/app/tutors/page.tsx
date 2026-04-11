@@ -222,10 +222,10 @@ export default function TutorsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Any Rating</SelectItem>
-                    <SelectItem value="4.5">4.5+ ⭐</SelectItem>
-                    <SelectItem value="4.0">4.0+ ⭐</SelectItem>
-                    <SelectItem value="3.5">3.5+ ⭐</SelectItem>
-                    <SelectItem value="3.0">3.0+ ⭐</SelectItem>
+                    <SelectItem value="4.5">4.5+ Rating</SelectItem>
+                    <SelectItem value="4.0">4.0+ Rating</SelectItem>
+                    <SelectItem value="3.5">3.5+ Rating</SelectItem>
+                    <SelectItem value="3.0">3.0+ Rating</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -335,7 +335,7 @@ export default function TutorsPage() {
                     )}
                     <div className="flex justify-between text-sm">
                       <span className="font-medium">${tutor.hourlyRate}/hr</span>
-                      <span>⭐ {avgRating}</span>
+                      <span>Rating: {avgRating}</span>
                     </div>
                     <p className="text-sm text-muted-foreground">{tutor.experience} years exp</p>
                   </div>

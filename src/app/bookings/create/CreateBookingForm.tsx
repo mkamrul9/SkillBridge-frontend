@@ -19,22 +19,22 @@ export default function CreateBookingForm({ tutorIdFromQuery }: { tutorIdFromQue
       const base = getApiBaseUrl();
       const tutorUrl = base.endsWith("/api") ? `${base}/tutors/${tutorIdFromQuery}` : `${base}/api/tutors/${tutorIdFromQuery}`;
       const bookingsUrl = base.endsWith("/api") ? `${base}/bookings/tutor/${tutorIdFromQuery}` : `${base}/api/bookings/tutor/${tutorIdFromQuery}`;
-      
+
       // Fetch tutor details
       fetch(tutorUrl, { credentials: "include" })
         .then((res) => res.json())
         .then((data) => {
           if (data.success) setTutor(data.data);
         })
-        .catch(() => {});
-      
+        .catch(() => { });
+
       // Fetch tutor bookings
       fetch(bookingsUrl, { credentials: "include" })
         .then((res) => res.json())
         .then((data) => {
           if (data.success) setBookings(data.data || []);
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [tutorIdFromQuery]);
 
@@ -42,11 +42,11 @@ export default function CreateBookingForm({ tutorIdFromQuery }: { tutorIdFromQue
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.currentTarget as HTMLFormElement);
-    
+
     const startTime = new Date(formData.get("bookingTime") as string);
     const duration = parseInt(formData.get("duration") as string);
     const endTime = new Date(startTime.getTime() + duration * 60 * 60 * 1000);
-    
+
     const data = {
       tutorId: formData.get("tutorId"),
       startTime: startTime.toISOString(),
@@ -88,20 +88,20 @@ export default function CreateBookingForm({ tutorIdFromQuery }: { tutorIdFromQue
           <CardContent>
             {tutor && (
               <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 p-3 dark:border-primary/30 dark:bg-primary/10">
-                <p className="text-sm font-semibold text-blue-800">👨‍🏫 Tutor: {tutor.user.name}</p>
+                <p className="text-sm font-semibold text-blue-800">Tutor: {tutor.user.name}</p>
                 <p className="text-xs text-blue-600 mt-1">{tutor.categories?.map((c: any) => c.name).join(', ') || 'No categories'} • ${tutor.hourlyRate}/hr</p>
               </div>
             )}
             {tutor?.availability && (
               <div className="mb-4 rounded-md border border-green-200 bg-green-50 p-3 dark:border-emerald-400/30 dark:bg-emerald-500/10">
-                <p className="text-sm font-semibold text-green-800">📅 Tutor Availability</p>
+                <p className="text-sm font-semibold text-green-800">Tutor Availability</p>
                 <p className="text-sm text-green-700 mt-1">{tutor.availability}</p>
-                <p className="text-xs text-green-600 mt-1">⚠️ Bookings outside these hours will be rejected (Weekends: Friday & Saturday)</p>
+                <p className="text-xs text-green-600 mt-1">Bookings outside these hours will be rejected (Weekends: Friday and Saturday).</p>
               </div>
             )}
             {bookings.length > 0 && (
               <div className="mb-4 rounded-md border border-orange-200 bg-orange-50 p-3 dark:border-amber-300/30 dark:bg-amber-500/10">
-                <p className="text-sm font-semibold text-orange-800">📋 Already Booked Time Slots</p>
+                <p className="text-sm font-semibold text-orange-800">Already Booked Time Slots</p>
                 <div className="mt-2 space-y-1 max-h-32 overflow-y-auto">
                   {bookings.filter(b => b.status === 'confirmed' || b.status === 'pending').map((booking) => (
                     <p key={booking.id} className="text-xs text-orange-700">
@@ -109,7 +109,7 @@ export default function CreateBookingForm({ tutorIdFromQuery }: { tutorIdFromQue
                     </p>
                   ))}
                 </div>
-                <p className="text-xs text-orange-600 mt-2">⚠️ Avoid booking during these times</p>
+                <p className="text-xs text-orange-600 mt-2">Avoid booking during these times.</p>
               </div>
             )}
             <form onSubmit={handleSubmit} className="space-y-4">

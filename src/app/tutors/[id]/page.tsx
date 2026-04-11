@@ -238,7 +238,7 @@ export default function TutorDetailsPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Rating</p>
-                  <p className="text-xl font-semibold">⭐ {avgRating}</p>
+                  <p className="text-xl font-semibold">{avgRating} / 5</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Reviews</p>
@@ -278,7 +278,7 @@ export default function TutorDetailsPage() {
               {tutor.availability && (
                 <div>
                   <p className="text-sm text-muted-foreground">Availability</p>
-                  <p className="mt-1 text-green-600 font-medium">📅 {tutor.availability}</p>
+                  <p className="mt-1 font-medium text-green-600">{tutor.availability}</p>
                   <p className="text-xs text-muted-foreground mt-1">Please book within these hours</p>
                 </div>
               )}
@@ -376,7 +376,7 @@ export default function TutorDetailsPage() {
                       <p className="line-clamp-2 text-sm text-muted-foreground">{item.bio || "No bio provided"}</p>
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-medium">${item.hourlyRate}/hr</span>
-                        <span>⭐ {relatedAvgRating}</span>
+                        <span>Rating: {relatedAvgRating}</span>
                       </div>
                       <div className="pt-1">
                         <Link href={`/tutors/${item.id}`}>

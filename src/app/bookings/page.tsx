@@ -177,11 +177,11 @@ export default function BookingsPage() {
             </CardContent>
           </Card>
         </div>
-        
+
         {/* Upcoming Bookings */}
         <div className="space-y-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-2xl font-semibold text-primary">📅 Upcoming Bookings ({filteredUpcomingBookings.length})</h2>
+            <h2 className="text-2xl font-semibold text-primary">Upcoming Bookings ({filteredUpcomingBookings.length})</h2>
             <Button
               type="button"
               variant="outline"
@@ -200,46 +200,46 @@ export default function BookingsPage() {
               const canDelete = user?.role === "ADMIN";
               // Student can review completed bookings if not already reviewed
               const canReview = user?.role === "STUDENT" && booking.status === "completed" && !booking.reviewedByStudent;
-                return (
-                  <Card key={booking.id}>
-                    <CardHeader>
-                      <CardTitle>Booking with {otherParty}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-                        <div className="md:col-span-2 flex flex-col gap-2">
-                          <div>
-                            <span className="font-medium">Status:</span>{" "}
-                            <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium capitalize ${getStatusBadgeClass(booking.status)}`}>
-                              {booking.status}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="font-medium">Start:</span> {new Date(booking.startTime).toLocaleString()}
-                          </div>
-                          <div>
-                            <span className="font-medium">End:</span> {new Date(booking.endTime).toLocaleString()}
-                          </div>
+              return (
+                <Card key={booking.id}>
+                  <CardHeader>
+                    <CardTitle>Booking with {otherParty}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                      <div className="md:col-span-2 flex flex-col gap-2">
+                        <div>
+                          <span className="font-medium">Status:</span>{" "}
+                          <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium capitalize ${getStatusBadgeClass(booking.status)}`}>
+                            {booking.status}
+                          </span>
                         </div>
-                        <div className="md:col-span-1 flex flex-col gap-2 items-stretch">
-                          <a href={`/bookings/${booking.id}`}>
-                            <Button size="sm" variant="outline" className="w-full md:w-auto">View Details</Button>
-                          </a>
-                          {canReview && (
-                            <a href={`/reviews/create?tutorId=${booking.tutorId}`}>
-                              <Button size="sm" variant="default" className="w-full md:w-auto">Give Review</Button>
-                            </a>
-                          )}
-                          {canDelete && (
-                            <Button size="sm" variant="destructive" onClick={() => handleDelete(booking.id)} className="w-full md:w-auto">
-                              Delete
-                            </Button>
-                          )}
+                        <div>
+                          <span className="font-medium">Start:</span> {new Date(booking.startTime).toLocaleString()}
+                        </div>
+                        <div>
+                          <span className="font-medium">End:</span> {new Date(booking.endTime).toLocaleString()}
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                );
+                      <div className="md:col-span-1 flex flex-col gap-2 items-stretch">
+                        <a href={`/bookings/${booking.id}`}>
+                          <Button size="sm" variant="outline" className="w-full md:w-auto">View Details</Button>
+                        </a>
+                        {canReview && (
+                          <a href={`/reviews/create?tutorId=${booking.tutorId}`}>
+                            <Button size="sm" variant="default" className="w-full md:w-auto">Give Review</Button>
+                          </a>
+                        )}
+                        {canDelete && (
+                          <Button size="sm" variant="destructive" onClick={() => handleDelete(booking.id)} className="w-full md:w-auto">
+                            Delete
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
             })
           )}
         </div>
@@ -247,7 +247,7 @@ export default function BookingsPage() {
         {/* Past Bookings */}
         <div className="space-y-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-2xl font-semibold text-muted-foreground">📋 Past Bookings ({filteredPastBookings.length})</h2>
+            <h2 className="text-2xl font-semibold text-muted-foreground">Past Bookings ({filteredPastBookings.length})</h2>
             <Button
               type="button"
               variant="outline"
@@ -264,46 +264,46 @@ export default function BookingsPage() {
               const otherParty = booking.tutor?.user?.name || booking.student?.name || booking.tutor?.user?.email || booking.student?.email;
               const canDelete = user?.role === "ADMIN";
               const canReview = user?.role === "STUDENT" && booking.status === "completed" && !booking.reviewedByStudent;
-                return (
-                  <Card key={booking.id} className="bg-muted/30">
-                    <CardHeader>
-                      <CardTitle>Booking with {otherParty}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-                        <div className="md:col-span-2 flex flex-col gap-2">
-                          <div>
-                            <span className="font-medium">Status:</span>{" "}
-                            <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium capitalize ${getStatusBadgeClass(booking.status)}`}>
-                              {booking.status}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="font-medium">Start:</span> {new Date(booking.startTime).toLocaleString()}
-                          </div>
-                          <div>
-                            <span className="font-medium">End:</span> {new Date(booking.endTime).toLocaleString()}
-                          </div>
+              return (
+                <Card key={booking.id} className="bg-muted/30">
+                  <CardHeader>
+                    <CardTitle>Booking with {otherParty}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                      <div className="md:col-span-2 flex flex-col gap-2">
+                        <div>
+                          <span className="font-medium">Status:</span>{" "}
+                          <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium capitalize ${getStatusBadgeClass(booking.status)}`}>
+                            {booking.status}
+                          </span>
                         </div>
-                        <div className="md:col-span-1 flex flex-col gap-2 items-stretch">
-                          <a href={`/bookings/${booking.id}`}>
-                            <Button size="sm" variant="outline" className="w-full md:w-auto">View Details</Button>
-                          </a>
-                          {canReview && (
-                            <a href={`/reviews/create?tutorId=${booking.tutorId}`}>
-                              <Button size="sm" variant="default" className="w-full md:w-auto">Give Review</Button>
-                            </a>
-                          )}
-                          {canDelete && (
-                            <Button size="sm" variant="destructive" onClick={() => handleDelete(booking.id)} className="w-full md:w-auto">
-                              Delete
-                            </Button>
-                          )}
+                        <div>
+                          <span className="font-medium">Start:</span> {new Date(booking.startTime).toLocaleString()}
+                        </div>
+                        <div>
+                          <span className="font-medium">End:</span> {new Date(booking.endTime).toLocaleString()}
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                );
+                      <div className="md:col-span-1 flex flex-col gap-2 items-stretch">
+                        <a href={`/bookings/${booking.id}`}>
+                          <Button size="sm" variant="outline" className="w-full md:w-auto">View Details</Button>
+                        </a>
+                        {canReview && (
+                          <a href={`/reviews/create?tutorId=${booking.tutorId}`}>
+                            <Button size="sm" variant="default" className="w-full md:w-auto">Give Review</Button>
+                          </a>
+                        )}
+                        {canDelete && (
+                          <Button size="sm" variant="destructive" onClick={() => handleDelete(booking.id)} className="w-full md:w-auto">
+                            Delete
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
             })
           )}
         </div>

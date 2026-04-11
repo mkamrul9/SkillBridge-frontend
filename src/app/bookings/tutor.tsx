@@ -4,15 +4,16 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { getApiBaseUrl } from "@/lib/api-url";
 
 export default function TutorBookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/bookings/tutor", { credentials: "include" })
+    const base = getApiBaseUrl();
+    const url = base.endsWith("/api") ? `${base}/bookings/tutor` : `${base}/api/bookings/tutor`;
+    fetch(url, { credentials: "include" })
       .then(async (res) => {
         if (!res.ok) {
           const text = await res.text();
@@ -40,13 +41,13 @@ export default function TutorBookingsPage() {
   const pastBookings = bookings.filter(b => new Date(b.startTime) <= now);
 
   return (
-    <div className="min-h-screen bg-background px-6 py-16">
-      <div className="mx-auto max-w-4xl space-y-6">
+    <div className="sb-page">
+      <div className="sb-container max-w-5xl space-y-6">
         <h1 className="text-3xl font-bold">My Tutor Bookings</h1>
         
         {/* Upcoming Bookings */}
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-primary">📅 Upcoming Sessions ({upcomingBookings.length})</h2>
+          <h2 className="text-2xl font-semibold text-primary">Upcoming Sessions ({upcomingBookings.length})</h2>
           {upcomingBookings.length === 0 ? (
             <p className="text-muted-foreground">No upcoming bookings</p>
           ) : (
@@ -80,7 +81,7 @@ export default function TutorBookingsPage() {
 
         {/* Past Bookings */}
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-muted-foreground">📋 Past Sessions ({pastBookings.length})</h2>
+          <h2 className="text-2xl font-semibold text-muted-foreground">Past Sessions ({pastBookings.length})</h2>
           {pastBookings.length === 0 ? (
             <p className="text-muted-foreground">No past bookings</p>
           ) : (

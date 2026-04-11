@@ -11,10 +11,9 @@ import { useTheme } from "next-themes";
 const navConfig = {
   common: [
     { href: "/", label: "Home" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
     { href: "/tutors", label: "Tutors" },
-    { href: "/categories", label: "Categories" },
-    { href: "/reviews", label: "Reviews" },
-    { href: "/bookings", label: "Bookings" },
     { href: "/help", label: "Help" },
   ],
 };

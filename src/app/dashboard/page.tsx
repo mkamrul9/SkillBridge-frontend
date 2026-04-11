@@ -23,7 +23,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const apiUrl = getApiBaseUrl();
-    
+
     // Fetch user profile
     fetch(`${apiUrl}/api/user/me`, { credentials: "include" })
       .then(async (res) => {
@@ -38,12 +38,12 @@ export default function DashboardPage() {
           if (data.data.tutorProfile) {
             setBio(data.data.tutorProfile.bio || "");
             setAvailability(data.data.tutorProfile.availability || "");
-            
+
             // Set selected categories
             if (data.data.tutorProfile.categories) {
               setSelectedCategoryIds(data.data.tutorProfile.categories.map((c: any) => c.id));
             }
-            
+
             // Calculate average rating
             if (data.data.tutorProfile.reviews && data.data.tutorProfile.reviews.length > 0) {
               const total = data.data.tutorProfile.reviews.reduce((sum: number, review: any) => sum + review.rating, 0);
@@ -55,7 +55,7 @@ export default function DashboardPage() {
         }
         setLoading(false);
       });
-    
+
     // Fetch all categories
     fetch(`${apiUrl}/api/categories`, { credentials: "include" })
       .then((res) => res.json())
@@ -70,7 +70,7 @@ export default function DashboardPage() {
   const handleUpdateTutorProfile = async () => {
     const apiUrl = getApiBaseUrl();
     const url = apiUrl.endsWith("/api") ? `${apiUrl}/tutors/profile` : `${apiUrl}/api/tutors/profile`;
-    
+
     const res = await fetch(url, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -81,7 +81,7 @@ export default function DashboardPage() {
         categoryIds: selectedCategoryIds,
       }),
     });
-    
+
     const data = await res.json();
     if (data.success) {
       toast.success("Profile updated successfully");
@@ -150,7 +150,7 @@ export default function DashboardPage() {
                   {profile.role === "TUTOR" && profile.tutorProfile && averageRating !== null && (
                     <div>
                       <p className="text-sm text-muted-foreground">Average Rating</p>
-                      <p className="font-medium">{averageRating.toFixed(1)} ⭐ ({profile.tutorProfile.reviews?.length || 0} reviews)</p>
+                      <p className="font-medium">{averageRating.toFixed(1)} / 5 ({profile.tutorProfile.reviews?.length || 0} reviews)</p>
                     </div>
                   )}
                   {profile.role === "TUTOR" && profile.tutorProfile && (
@@ -193,11 +193,10 @@ export default function DashboardPage() {
                               {categories.map((category) => (
                                 <label
                                   key={category.id}
-                                  className={`cursor-pointer rounded-full px-4 py-2 text-sm border transition-colors ${
-                                    selectedCategoryIds.includes(category.id)
+                                  className={`cursor-pointer rounded-full px-4 py-2 text-sm border transition-colors ${selectedCategoryIds.includes(category.id)
                                       ? "bg-primary text-primary-foreground border-primary"
                                       : "bg-background hover:bg-muted border-input"
-                                  }`}
+                                    }`}
                                 >
                                   <input
                                     type="checkbox"
@@ -277,6 +276,6 @@ export default function DashboardPage() {
       </main>
     </div>
   );
- 
+
 
 }

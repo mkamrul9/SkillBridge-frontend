@@ -78,7 +78,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-background">
       {/* 1) Interactive Hero */}
-      <section className="relative flex min-h-[65vh] w-full items-center justify-center overflow-hidden bg-linear-to-br from-slate-950 via-slate-900 to-cyan-900 px-4 py-14 text-center text-white sm:px-6">
+      <section className="relative flex min-h-[65vh] w-full items-center justify-center overflow-hidden bg-linear-to-br from-blue-900 via-cyan-900 to-amber-700 px-4 py-14 text-center text-white sm:px-6">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.25),transparent_45%),radial-gradient(circle_at_80%_80%,rgba(59,130,246,0.25),transparent_45%)]" />
         <div className="relative z-10 mx-auto max-w-4xl space-y-6">
           <p className="text-xs uppercase tracking-[0.35em] text-cyan-200">SkillBridge</p>
@@ -87,12 +87,12 @@ export default function HomePage() {
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href={slide.primaryHref}>
-              <Button size="lg" className="w-full bg-cyan-400 px-8 text-slate-950 hover:bg-cyan-300 sm:w-auto">
+              <Button size="lg" className="w-full border border-white/20 bg-white text-blue-900 shadow-xl hover:bg-white/90 sm:w-auto">
                 {slide.ctaPrimary}
               </Button>
             </Link>
             <Link href={slide.secondaryHref}>
-              <Button size="lg" variant="outline" className="w-full border-slate-200 text-slate-100 hover:bg-slate-100 hover:text-slate-950 sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full border-white/70 bg-white/15 text-white hover:bg-white/25 sm:w-auto">
                 {slide.ctaSecondary}
               </Button>
             </Link>
@@ -133,7 +133,7 @@ export default function HomePage() {
       </section>
 
       {/* 2) Quick Stats */}
-      <section id="home-next" className="w-full border-t bg-background py-14">
+      <section id="home-next" className="sb-section-blue w-full py-14">
         <div className="mx-auto grid max-w-6xl gap-4 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
           {[
             ["1,200+", "Active Students"],
@@ -150,7 +150,7 @@ export default function HomePage() {
       </section>
 
       {/* 3) How It Works */}
-      <section className="w-full border-t py-16">
+      <section className="sb-section-teal w-full py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <h2 className="mb-8 text-center text-3xl font-bold sm:text-4xl">How SkillBridge Works</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -171,12 +171,12 @@ export default function HomePage() {
       </section>
 
       {/* 4) Learning Categories */}
-      <section className="w-full border-t bg-slate-50 py-16">
+      <section className="sb-section-amber w-full py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <h2 className="mb-8 text-center text-3xl font-bold sm:text-4xl">Popular Learning Categories</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {["Math", "Science", "English", "Programming", "Design", "Business", "Test Prep", "Languages"].map((item) => (
-              <Link key={item} href="/tutors" className="rounded-xl border bg-white p-5 text-center font-medium transition hover:-translate-y-0.5 hover:shadow-md">
+              <Link key={item} href="/tutors" className="rounded-xl border bg-card/95 p-5 text-center font-medium transition hover:-translate-y-0.5 hover:shadow-md">
                 {item}
               </Link>
             ))}
@@ -185,7 +185,7 @@ export default function HomePage() {
       </section>
 
       {/* 5) Why Choose Us */}
-      <section className="w-full border-t py-16">
+      <section className="sb-section-blue w-full py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <h2 className="mb-8 text-center text-3xl font-bold sm:text-4xl">Why Students Choose SkillBridge</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -207,7 +207,7 @@ export default function HomePage() {
       <FeaturedTutorsSection />
 
       {/* 7) Success Stories */}
-      <section className="w-full border-t py-16">
+      <section className="sb-section-teal w-full py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <h2 className="mb-8 text-center text-3xl font-bold sm:text-4xl">Student Success Stories</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -226,7 +226,7 @@ export default function HomePage() {
       </section>
 
       {/* 8) Offers */}
-      <section className="w-full border-t bg-slate-50 py-16">
+      <section className="sb-section-amber w-full py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <h2 className="mb-8 text-center text-3xl font-bold sm:text-4xl">Current Offers</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -235,7 +235,7 @@ export default function HomePage() {
               ["Weekly Plan", "Book 4 sessions and unlock discounted rates."],
               ["Referral Reward", "Invite a friend and both get bonus credits."],
             ].map(([title, text]) => (
-              <div key={title} className="rounded-xl border bg-white p-6 shadow-sm">
+              <div key={title} className="rounded-xl border bg-card/95 p-6 shadow-sm">
                 <h3 className="mb-2 text-lg font-semibold">{title}</h3>
                 <p className="text-muted-foreground">{text}</p>
               </div>
@@ -245,7 +245,7 @@ export default function HomePage() {
       </section>
 
       {/* 9) FAQ */}
-      <section className="w-full border-t py-16">
+      <section className="sb-section-blue w-full py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <h2 className="mb-8 text-center text-3xl font-bold sm:text-4xl">Frequently Asked Questions</h2>
           <div className="space-y-4">
@@ -264,7 +264,7 @@ export default function HomePage() {
       </section>
 
       {/* 10) Newsletter */}
-      <section className="w-full border-t bg-slate-950 py-16 text-white">
+      <section className="w-full border-y bg-linear-to-br from-blue-950 via-slate-950 to-cyan-900 py-16 text-white">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
           <h2 className="text-3xl font-bold sm:text-4xl">Stay Updated</h2>
           <p className="mx-auto mt-3 max-w-2xl text-slate-300">
@@ -279,13 +279,13 @@ export default function HomePage() {
               aria-label="Email for newsletter"
               className="h-11 flex-1 rounded-md border border-slate-700 bg-slate-900 px-4 text-sm text-white placeholder:text-slate-400"
             />
-            <Button type="submit" className="h-11 bg-cyan-400 text-slate-950 hover:bg-cyan-300">Subscribe</Button>
+            <Button type="submit" className="h-11 border border-white/30 bg-amber-400 text-slate-950 hover:bg-amber-300">Subscribe</Button>
           </form>
         </div>
       </section>
 
       {/* 11) Final CTA */}
-      <section className="w-full border-t py-16">
+      <section className="sb-section-teal w-full py-16">
         <div className="mx-auto max-w-5xl px-4 text-center sm:px-6">
           <h2 className="text-3xl font-bold sm:text-4xl">Ready To Start Your Learning Journey?</h2>
           <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
