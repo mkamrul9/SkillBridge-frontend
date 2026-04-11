@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/user-context";
+import { useConfirm } from "@/components/confirm-provider";
 
 
 export default function CategoriesPage() {
@@ -13,6 +14,7 @@ export default function CategoriesPage() {
   const [error, setError] = useState("");
   const { user } = useUser();
   const router = useRouter();
+  const { confirm } = useConfirm();
 
   const loadCategories = () => {
     setLoading(true);
@@ -30,7 +32,13 @@ export default function CategoriesPage() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this category?")) return;
+    const approved = await confirm({
+      title: "Delete category",
+      message: "Are you sure you want to delete this category?",
+      confirmText: "Delete",
+      variant: "destructive",
+    });
+    if (!approved) return;
     try {
       await deleteCategory(id);
       loadCategories();
@@ -39,7 +47,7 @@ export default function CategoriesPage() {
     }
   };
 
-  if (loading) return <div className="flex justify-center items-center min-h-[200px]">Loading...</div>;
+  if (loading) return <div className="flex justify-center items-center min-h-50">Loading...</div>;
   if (error) return <div className="text-red-500 text-center">Error: {error}</div>;
 
   return (

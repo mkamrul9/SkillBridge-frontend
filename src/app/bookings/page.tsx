@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useUser } from "@/lib/user-context";
 import { getApiBaseUrl } from "@/lib/api-url";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useConfirm } from "@/components/confirm-provider";
 
 function BookingsPageSkeleton() {
   return (
@@ -47,6 +48,7 @@ export default function BookingsPage() {
   const [upcomingSortOrder, setUpcomingSortOrder] = useState<"asc" | "desc">("asc");
   const [pastSortOrder, setPastSortOrder] = useState<"asc" | "desc">("desc");
   const { user } = useUser();
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     const base = getApiBaseUrl();
@@ -62,7 +64,13 @@ export default function BookingsPage() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this booking?")) return;
+    const approved = await confirm({
+      title: "Delete booking",
+      message: "Are you sure you want to delete this booking?",
+      confirmText: "Delete",
+      variant: "destructive",
+    });
+    if (!approved) return;
     const base = getApiBaseUrl();
     const url = base.endsWith("/api") ? `${base}/bookings/${id}` : `${base}/api/bookings/${id}`;
     const res = await fetch(url, {

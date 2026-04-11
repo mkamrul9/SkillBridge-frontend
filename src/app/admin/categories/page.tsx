@@ -1,12 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getAllCategories, updateCategory, deleteCategory } from "@/lib/category-api";
+import { useConfirm } from "@/components/confirm-provider";
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [editId, setEditId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [error, setError] = useState("");
+  const { confirm } = useConfirm();
 
   const load = () => getAllCategories().then(setCategories).catch(e => setError(e.message));
   useEffect(() => { load(); }, []);
@@ -20,7 +22,13 @@ export default function AdminCategoriesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this category?")) return;
+    const approved = await confirm({
+      title: "Delete category",
+      message: "Are you sure you want to delete this category?",
+      confirmText: "Delete",
+      variant: "destructive",
+    });
+    if (!approved) return;
     try {
       await deleteCategory(id);
       load();

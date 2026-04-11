@@ -11,7 +11,7 @@ const buttonVariants = cva(
         default:
           "bg-linear-to-r from-primary to-secondary text-primary-foreground shadow-[0_12px_24px_-14px_rgba(37,99,235,0.9)] hover:brightness-105",
         destructive:
-          "bg-linear-to-r from-destructive to-rose-500 text-destructive-foreground shadow-[0_10px_22px_-14px_rgba(239,68,68,0.9)] hover:brightness-105",
+          "bg-linear-to-r from-rose-700 to-rose-600 text-white shadow-[0_10px_22px_-14px_rgba(190,24,93,0.8)] hover:brightness-105",
         outline:
           "border border-input bg-card/80 text-foreground hover:bg-accent/70 hover:text-accent-foreground",
         secondary:

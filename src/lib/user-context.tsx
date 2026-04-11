@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getApiBaseUrl } from "./api-url";
+import { toast } from "sonner";
 
 type UserType = any | null;
 type UserContextType = {
@@ -26,7 +27,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         if (res.status === 403) {
           // User is banned
           const data = await res.json();
-          alert(data.message || "Your account has been banned");
+          toast.error(data.message || "Your account has been banned");
           setUser(null);
           localStorage.removeItem('token');
           return Promise.reject("Banned");

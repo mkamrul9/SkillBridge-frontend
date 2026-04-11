@@ -7,6 +7,7 @@ import Footer from "@/components/footer";
 import { UserProvider } from "@/lib/user-context";
 import ResponsiveContainer from "@/components/ResponsiveContainer";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ConfirmProvider } from "@/components/confirm-provider";
 
 export const metadata: Metadata = {
   title: "SkillBridge",
@@ -22,13 +23,15 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans">
         <ThemeProvider>
-          <UserProvider>
-            <Navbar />
-            <ResponsiveContainer>
-              {children}
-            </ResponsiveContainer>
-            <Footer />
-          </UserProvider>
+          <ConfirmProvider>
+            <UserProvider>
+              <Navbar />
+              <ResponsiveContainer className="sb-shell">
+                {children}
+              </ResponsiveContainer>
+              <Footer />
+            </UserProvider>
+          </ConfirmProvider>
         </ThemeProvider>
         <Toaster richColors position="top-right" />
       </body>

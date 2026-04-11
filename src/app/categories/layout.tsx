@@ -1,6 +1,9 @@
+import { Sidebar } from "@/components/sidebar";
+
 export default function CategoriesLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background md:flex">
+      <Sidebar />
       <main className="flex-1">{children}</main>
     </div>
   );

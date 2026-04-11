@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="mt-12 border-t bg-slate-950 text-slate-100">
+    <footer className="mt-12 border-t border-slate-700/70 bg-linear-to-br from-slate-900 via-slate-900 to-blue-950 text-slate-100">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 md:grid-cols-3">
         <div className="space-y-3">
           <h3 className="text-xl font-bold tracking-tight">SkillBridge</h3>
@@ -16,7 +16,7 @@ export default function Footer() {
               href="https://github.com/mkamrul9"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-colors hover:text-cyan-300"
+              className="transition-colors hover:text-cyan-200"
             >
               GitHub
             </a>
@@ -24,7 +24,7 @@ export default function Footer() {
               href="https://x.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-colors hover:text-cyan-300"
+              className="transition-colors hover:text-cyan-200"
             >
               X
             </a>
@@ -32,7 +32,7 @@ export default function Footer() {
               href="https://www.linkedin.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-colors hover:text-cyan-300"
+              className="transition-colors hover:text-cyan-200"
             >
               LinkedIn
             </a>
@@ -41,49 +41,49 @@ export default function Footer() {
 
         <div>
           <h4 className="mb-3 font-semibold">Important Links</h4>
-          <ul className="space-y-2 text-sm text-slate-300">
+          <ul className="space-y-2 text-sm text-slate-200/90">
             <li>
-              <Link href="/" className="transition-colors hover:text-cyan-300">
+              <Link href="/" className="transition-colors hover:text-cyan-200">
                 Home
               </Link>
             </li>
             <li>
-              <Link href="/tutors" className="transition-colors hover:text-cyan-300">
+              <Link href="/tutors" className="transition-colors hover:text-cyan-200">
                 Explore Tutors
               </Link>
             </li>
             <li>
-              <Link href="/about" className="transition-colors hover:text-cyan-300">
+              <Link href="/about" className="transition-colors hover:text-cyan-200">
                 About
               </Link>
             </li>
             <li>
-              <Link href="/contact" className="transition-colors hover:text-cyan-300">
+              <Link href="/contact" className="transition-colors hover:text-cyan-200">
                 Contact
               </Link>
             </li>
             <li>
-              <Link href="/help" className="transition-colors hover:text-cyan-300">
+              <Link href="/help" className="transition-colors hover:text-cyan-200">
                 Help Center
               </Link>
             </li>
             <li>
-              <Link href="/login" className="transition-colors hover:text-cyan-300">
+              <Link href="/login" className="transition-colors hover:text-cyan-200">
                 Login
               </Link>
             </li>
             <li>
-              <Link href="/register" className="transition-colors hover:text-cyan-300">
+              <Link href="/register" className="transition-colors hover:text-cyan-200">
                 Register
               </Link>
             </li>
             <li>
-              <Link href="/privacy" className="transition-colors hover:text-cyan-300">
+              <Link href="/privacy" className="transition-colors hover:text-cyan-200">
                 Privacy Policy
               </Link>
             </li>
             <li>
-              <Link href="/terms" className="transition-colors hover:text-cyan-300">
+              <Link href="/terms" className="transition-colors hover:text-cyan-200">
                 Terms of Service
               </Link>
             </li>
@@ -92,12 +92,12 @@ export default function Footer() {
 
         <div>
           <h4 className="mb-3 font-semibold">Contact</h4>
-          <ul className="space-y-2 text-sm text-slate-300">
+          <ul className="space-y-2 text-sm text-slate-200/90">
             <li>
-              Email: <a href="mailto:support@skillbridge.com" className="transition-colors hover:text-cyan-300">support@skillbridge.com</a>
+              Email: <a href="mailto:support@skillbridge.com" className="transition-colors hover:text-cyan-200">support@skillbridge.com</a>
             </li>
             <li>
-              Phone: <a href="tel:+8801700000000" className="transition-colors hover:text-cyan-300">+880 1700-000000</a>
+              Phone: <a href="tel:+8801700000000" className="transition-colors hover:text-cyan-200">+880 1700-000000</a>
             </li>
             <li>Address: Dhaka, Bangladesh</li>
             <li>Support Hours: Sat-Thu, 9:00 AM - 6:00 PM</li>
@@ -105,7 +105,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-slate-800 px-4 py-4 text-center text-xs text-slate-400 sm:px-6">
+      <div className="border-t border-slate-700 px-4 py-4 text-center text-xs text-slate-300/80 sm:px-6">
         &copy; {new Date().getFullYear()} SkillBridge. All rights reserved.
       </div>
     </footer>

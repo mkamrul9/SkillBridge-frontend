@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useUser } from "@/lib/user-context";
 import { getApiBaseUrl } from "@/lib/api-url";
+import { useConfirm } from "@/components/confirm-provider";
 
 export default function AllBookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState<string | null>(null);
   const { user } = useUser();
+  const { confirm } = useConfirm();
 
   const fetchBookings = () => {
     const base = getApiBaseUrl();
@@ -30,7 +32,13 @@ export default function AllBookingsPage() {
   }, []);
 
   const handleCancel = async (bookingId: string) => {
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
+    const approved = await confirm({
+      title: "Cancel booking",
+      message: "Are you sure you want to cancel this booking?",
+      confirmText: "Yes, cancel",
+      variant: "destructive",
+    });
+    if (!approved) return;
     setCancelling(bookingId);
     const base = getApiBaseUrl();
     const url = base.endsWith("/api") ? `${base}/bookings/${bookingId}/status` : `${base}/api/bookings/${bookingId}/status`;

@@ -7,10 +7,12 @@ import LoadingButton from "@/components/LoadingButton";
 import { toast } from "sonner";
 import Link from "next/link";
 import { getApiBaseUrl } from "@/lib/api-url";
+import { useConfirm } from "@/components/confirm-provider";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     loadUsers();
@@ -58,7 +60,7 @@ export default function AdminUsers() {
       body: JSON.stringify({ role }),
     });
     const data = await response.json();
-    
+
     if (data.success) {
       toast.success("Role updated");
       loadUsers();
@@ -113,7 +115,13 @@ export default function AdminUsers() {
                         variant="destructive"
                         className="w-full sm:w-auto"
                         onClick={async () => {
-                          if (!confirm('Ban this user?')) return;
+                          const approved = await confirm({
+                            title: "Ban user",
+                            message: "Are you sure you want to ban this user?",
+                            confirmText: "Ban user",
+                            variant: "destructive",
+                          });
+                          if (!approved) return;
                           await updateStatus(user.id, "BANNED");
                         }}
                       >
@@ -125,35 +133,50 @@ export default function AdminUsers() {
                         variant="outline"
                         className="w-full sm:w-auto"
                         onClick={async () => {
-                          if (!confirm('Unban this user?')) return;
+                          const approved = await confirm({
+                            title: "Unban user",
+                            message: "Are you sure you want to reactivate this user account?",
+                            confirmText: "Unban user",
+                          });
+                          if (!approved) return;
                           await updateStatus(user.id, "ACTIVE");
                         }}
                       >
                         Unban User
                       </LoadingButton>
                     )}
-                    
+
                     {user.role !== "TUTOR" && (
                       <LoadingButton
                         size="sm"
                         variant="outline"
                         className="w-full sm:w-auto"
                         onClick={async () => {
-                          if (!confirm('Promote user to Tutor?')) return;
+                          const approved = await confirm({
+                            title: "Promote user",
+                            message: "Promote this user to Tutor role?",
+                            confirmText: "Promote",
+                          });
+                          if (!approved) return;
                           await updateRole(user.id, "TUTOR");
                         }}
                       >
                         Make Tutor
                       </LoadingButton>
                     )}
-                    
+
                     {user.role !== "STUDENT" && (
                       <LoadingButton
                         size="sm"
                         variant="outline"
                         className="w-full sm:w-auto"
                         onClick={async () => {
-                          if (!confirm('Demote user to Student?')) return;
+                          const approved = await confirm({
+                            title: "Demote user",
+                            message: "Change this user role to Student?",
+                            confirmText: "Change role",
+                          });
+                          if (!approved) return;
                           await updateRole(user.id, "STUDENT");
                         }}
                       >

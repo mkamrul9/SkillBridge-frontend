@@ -5,6 +5,7 @@ import { useUser } from "@/lib/user-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
+import { useConfirm } from "@/components/confirm-provider";
 import { getApiBaseUrl } from "@/lib/api-url";
 import Link from "next/link";
 import Image from "next/image";
@@ -64,6 +65,7 @@ export default function TutorDetailsPage() {
   const [imageFailed, setImageFailed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reviewSortBy, setReviewSortBy] = useState<"newest" | "highest">("newest");
+  const { confirm } = useConfirm();
 
   const copyProfileLink = async () => {
     try {
@@ -317,7 +319,13 @@ export default function TutorDetailsPage() {
                                   <button
                                     className="mt-2 sm:mt-0 ml-0 sm:ml-4 px-2 py-1 rounded bg-destructive text-white text-xs hover:bg-destructive/80 w-full sm:w-auto"
                                     onClick={async () => {
-                                      if (!confirm("Are you sure you want to delete this review?")) return;
+                                      const approved = await confirm({
+                                        title: "Delete review",
+                                        message: "Are you sure you want to delete this review?",
+                                        confirmText: "Delete",
+                                        variant: "destructive",
+                                      });
+                                      if (!approved) return;
                                       try {
                                         await deleteReview(review.id);
                                         toast.success("Review deleted");

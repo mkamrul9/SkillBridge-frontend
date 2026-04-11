@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getApiBaseUrl } from "@/lib/api-url";
+import { useConfirm } from "@/components/confirm-provider";
 
 export default function BookingDetailsPage() {
   const params = useParams();
@@ -14,6 +15,7 @@ export default function BookingDetailsPage() {
   const [loading, setLoading] = useState(true);
   // Only use booking.status from backend, no local status state
   const [updating, setUpdating] = useState(false);
+  const { confirm } = useConfirm();
 
   const fetchBooking = async () => {
     setLoading(true);
@@ -40,7 +42,13 @@ export default function BookingDetailsPage() {
   }, [params.id]);
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this booking?")) return;
+    const approved = await confirm({
+      title: "Delete booking",
+      message: "Are you sure you want to delete this booking?",
+      confirmText: "Delete",
+      variant: "destructive",
+    });
+    if (!approved) return;
     const base = getApiBaseUrl();
     const url = base.endsWith("/api") ? `${base}/bookings/${params.id}` : `${base}/api/bookings/${params.id}`;
     const res = await fetch(url, {
@@ -82,7 +90,13 @@ export default function BookingDetailsPage() {
   };
 
   const handleCancel = async () => {
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
+    const approved = await confirm({
+      title: "Cancel booking",
+      message: "Are you sure you want to cancel this booking?",
+      confirmText: "Cancel booking",
+      variant: "destructive",
+    });
+    if (!approved) return;
     setUpdating(true);
     const base = getApiBaseUrl();
     const url = base.endsWith("/api") ? `${base}/bookings/${params.id}/status` : `${base}/api/bookings/${params.id}/status`;
