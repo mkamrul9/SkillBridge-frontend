@@ -110,8 +110,8 @@ export default function BookingDetailsPage() {
   const canComplete = isTutor && booking.status === "confirmed";
 
   return (
-    <div className="min-h-screen bg-background px-6 py-16">
-      <div className="mx-auto max-w-2xl">
+    <div className="sb-page">
+      <div className="sb-container max-w-3xl">
         <Card>
           <CardHeader>
             <CardTitle>Booking Details</CardTitle>
@@ -131,8 +131,8 @@ export default function BookingDetailsPage() {
                 </div>
               )}
               {canComplete && (
-                <form onSubmit={handleComplete} className="flex items-center gap-2 mb-2">
-                  <Button size="sm" type="submit" disabled={updating}>
+                <form onSubmit={handleComplete} className="mb-2 flex items-center gap-2">
+                  <Button size="sm" type="submit" className="w-full sm:w-auto" disabled={updating}>
                     {updating ? "Updating..." : "Mark as Completed"}
                   </Button>
                 </form>
@@ -143,8 +143,8 @@ export default function BookingDetailsPage() {
               <div><span className="font-medium">Tutor:</span> {booking.tutor?.user?.name}</div>
               <div><span className="font-medium">Student:</span> {booking.student?.name}</div>
             </div>
-            <div className="flex gap-2 mt-4">
-              <Button size="sm" variant="outline" onClick={() => router.push("/bookings")}>Back</Button>
+            <div className="mt-4 flex gap-2">
+              <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => router.push("/bookings")}>Back</Button>
             </div>
           </CardContent>
         </Card>

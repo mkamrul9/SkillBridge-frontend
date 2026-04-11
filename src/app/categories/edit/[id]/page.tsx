@@ -43,11 +43,12 @@ export default function EditCategoryPage() {
     }
   };
 
-  if (!init) return <div className="flex justify-center items-center min-h-[200px]">Loading...</div>;
+  if (!init) return <div className="flex min-h-50 items-center justify-center">Loading...</div>;
 
   return (
-    <div className="max-w-md mx-auto py-8">
-      <Card>
+    <div className="sb-page">
+      <div className="sb-container max-w-2xl">
+      <Card className="mx-auto w-full max-w-md">
         <CardHeader>
           <CardTitle>Edit Category</CardTitle>
         </CardHeader>
@@ -58,12 +59,13 @@ export default function EditCategoryPage() {
             {error && <div className="text-red-500 text-sm">{error}</div>}
             {success && <div className="text-green-600 text-sm">{success}</div>}
           </CardContent>
-          <CardFooter className="flex gap-2">
-            <Button type="submit" disabled={loading || !name}>{loading ? "Saving..." : "Save"}</Button>
-            <Button type="button" variant="outline" onClick={() => router.push("/categories")}>Back to Categories</Button>
+          <CardFooter className="flex flex-col gap-2 sm:flex-row">
+            <Button type="submit" className="w-full sm:w-auto" disabled={loading || !name}>{loading ? "Saving..." : "Save"}</Button>
+            <Button type="button" variant="outline" className="w-full sm:w-auto" onClick={() => router.push("/categories")}>Back to Categories</Button>
           </CardFooter>
         </form>
       </Card>
+      </div>
     </div>
   );
 }

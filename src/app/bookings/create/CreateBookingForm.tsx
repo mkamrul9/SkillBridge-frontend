@@ -79,28 +79,28 @@ export default function CreateBookingForm({ tutorIdFromQuery }: { tutorIdFromQue
   };
 
   return (
-    <div className="min-h-screen bg-background px-6 py-16">
-      <div className="mx-auto max-w-2xl">
+    <div className="sb-page">
+      <div className="sb-container max-w-3xl">
         <Card>
           <CardHeader>
             <CardTitle>Create Booking{tutor ? ` with ${tutor.user.name}` : ''}</CardTitle>
           </CardHeader>
           <CardContent>
             {tutor && (
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+              <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 p-3 dark:border-primary/30 dark:bg-primary/10">
                 <p className="text-sm font-semibold text-blue-800">👨‍🏫 Tutor: {tutor.user.name}</p>
                 <p className="text-xs text-blue-600 mt-1">{tutor.categories?.map((c: any) => c.name).join(', ') || 'No categories'} • ${tutor.hourlyRate}/hr</p>
               </div>
             )}
             {tutor?.availability && (
-              <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+              <div className="mb-4 rounded-md border border-green-200 bg-green-50 p-3 dark:border-emerald-400/30 dark:bg-emerald-500/10">
                 <p className="text-sm font-semibold text-green-800">📅 Tutor Availability</p>
                 <p className="text-sm text-green-700 mt-1">{tutor.availability}</p>
                 <p className="text-xs text-green-600 mt-1">⚠️ Bookings outside these hours will be rejected (Weekends: Friday & Saturday)</p>
               </div>
             )}
             {bookings.length > 0 && (
-              <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-md">
+              <div className="mb-4 rounded-md border border-orange-200 bg-orange-50 p-3 dark:border-amber-300/30 dark:bg-amber-500/10">
                 <p className="text-sm font-semibold text-orange-800">📋 Already Booked Time Slots</p>
                 <div className="mt-2 space-y-1 max-h-32 overflow-y-auto">
                   {bookings.filter(b => b.status === 'confirmed' || b.status === 'pending').map((booking) => (
@@ -135,7 +135,7 @@ export default function CreateBookingForm({ tutorIdFromQuery }: { tutorIdFromQue
               </Button>
             </form>
             <div className="mt-6 text-center">
-              <Button variant="outline" onClick={() => (window.location.href = "/bookings")}>Back</Button>
+              <Button variant="outline" className="w-full sm:w-auto" onClick={() => (window.location.href = "/bookings")}>Back</Button>
             </div>
           </CardContent>
         </Card>

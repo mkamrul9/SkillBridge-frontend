@@ -29,7 +29,9 @@ export default function CreateReviewForm({ tutorId }: { tutorId: string }) {
   };
 
   return (
-    <div className="max-w-md mx-auto py-8">
+    <div className="sb-page">
+      <div className="sb-container max-w-2xl">
+      <div className="mx-auto w-full max-w-md">
       {success ? (
         <div className="space-y-4 text-center">
           <h2 className="text-xl font-bold">Review submitted!</h2>
@@ -53,13 +55,15 @@ export default function CreateReviewForm({ tutorId }: { tutorId: string }) {
             required
           />
           {error && <div className="text-red-500 text-sm">{error}</div>}
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Submitting..." : "Submit Review"}
           </Button>
         </form>
       )}
       <div className="mt-6 text-center">
-        <Button variant="outline" onClick={() => router.back()}>Back</Button>
+        <Button variant="outline" className="w-full sm:w-auto" onClick={() => router.back()}>Back</Button>
+      </div>
+      </div>
       </div>
     </div>
   );

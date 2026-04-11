@@ -36,11 +36,12 @@ export default function TutorReviewsPage({ params }: { params: { tutorId: string
     }
   };
 
-  if (loading) return <div className="flex justify-center items-center min-h-[200px]">Loading...</div>;
+  if (loading) return <div className="flex min-h-50 items-center justify-center">Loading...</div>;
   if (error) return <div className="text-red-500 text-center">Error: {error}</div>;
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
+    <div className="sb-page">
+      <div className="sb-container max-w-4xl">
       <Card>
         <CardHeader>
           <CardTitle>Reviews</CardTitle>
@@ -51,13 +52,13 @@ export default function TutorReviewsPage({ params }: { params: { tutorId: string
           ) : (
             <ul className="space-y-2">
               {reviews.map((review) => (
-                <li key={review.id} className="border-b last:border-b-0 py-2 text-base flex items-center justify-between">
+                <li key={review.id} className="flex flex-col justify-between gap-3 border-b py-2 text-base last:border-b-0 sm:flex-row sm:items-center">
                   <div>
                     <div className="font-medium">Rating: {review.rating}</div>
                     <div className="text-sm text-muted-foreground">{review.comment}</div>
                   </div>
                   {(user?.role === "ADMIN" || user?.id === review.studentId) && (
-                    <Button size="sm" variant="destructive" onClick={() => handleDelete(review.id)}>Delete</Button>
+                    <Button size="sm" variant="destructive" className="w-full sm:w-auto" onClick={() => handleDelete(review.id)}>Delete</Button>
                   )}
                 </li>
               ))}
@@ -65,6 +66,7 @@ export default function TutorReviewsPage({ params }: { params: { tutorId: string
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

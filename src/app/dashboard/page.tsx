@@ -108,14 +108,14 @@ export default function DashboardPage() {
   if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="px-6 py-16">
-        <div className="mx-auto max-w-6xl space-y-8">
-          <div className="flex items-center justify-between">
-            <Button variant="outline" onClick={() => window.history.back()} className="mr-4">Back</Button>
-            <h1 className="text-3xl font-bold">Dashboard</h1>
-            <Link href="/profile/edit">
-              <Button>Edit Profile</Button>
+    <div className="sb-page">
+      <main>
+        <div className="sb-container space-y-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <Button variant="outline" onClick={() => window.history.back()} className="w-full sm:mr-4 sm:w-auto">Back</Button>
+            <h1 className="sb-title text-center sm:text-left">Dashboard</h1>
+            <Link href="/profile/edit" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto">Edit Profile</Button>
             </Link>
           </div>
 
@@ -226,9 +226,9 @@ export default function DashboardPage() {
                         )}
                       </div>
                       {editing && (
-                        <div className="sm:col-span-2 flex gap-2">
-                          <Button onClick={handleUpdateTutorProfile}>Save Changes</Button>
-                          <Button variant="outline" onClick={() => {
+                        <div className="sm:col-span-2 flex flex-col gap-2 sm:flex-row">
+                          <Button onClick={handleUpdateTutorProfile} className="w-full sm:w-auto">Save Changes</Button>
+                          <Button variant="outline" className="w-full sm:w-auto" onClick={() => {
                             setEditing(false);
                             setBio(profile.tutorProfile.bio || "");
                             setAvailability(profile.tutorProfile.availability || "");

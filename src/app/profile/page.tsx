@@ -24,19 +24,19 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background px-6 py-16 flex flex-col justify-between">
-      <div className="mx-auto max-w-2xl space-y-6">
+    <div className="sb-page flex flex-col justify-between">
+      <div className="sb-container max-w-3xl space-y-6">
         <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
           <h1 className="text-3xl font-bold">My Profile</h1>
           <Link href="/profile/edit">
             <Button>Edit</Button>
           </Link>
         </div>
-        <Card className="pr-4 sm:pr-0">
+        <Card>
           <CardHeader>
             <CardTitle>Profile Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 pr-4 sm:pr-0">
+          <CardContent className="space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="flex-shrink-0">
                 {user.image ? (
@@ -73,8 +73,8 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
       </div>
-      <div className="mx-auto max-w-2xl w-full flex justify-center sm:justify-end mt-8">
-        <Button variant="outline" onClick={handleLogout}>Logout</Button>
+      <div className="mx-auto mt-8 flex w-full max-w-3xl justify-center sm:justify-end">
+        <Button variant="outline" className="w-full sm:w-auto" onClick={handleLogout}>Logout</Button>
       </div>
     </div>
   );

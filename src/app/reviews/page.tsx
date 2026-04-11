@@ -37,19 +37,20 @@ export default function ReviewEntryPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="flex justify-center items-center min-h-[200px]">Loading...</div>;
+  if (loading) return <div className="flex min-h-50 items-center justify-center">Loading...</div>;
   if (error) return <div className="text-red-500 text-center">Error: {error}</div>;
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-4">{user?.role === "ADMIN" ? "All Reviews" : "My Reviews"}</h1>
+    <div className="sb-page">
+      <div className="sb-container max-w-5xl">
+      <h1 className="sb-title mb-4">{user?.role === "ADMIN" ? "All Reviews" : "My Reviews"}</h1>
 
       {reviews.length === 0 ? (
         <div className="text-muted-foreground">No reviews found.</div>
       ) : (
         <div className="space-y-4">
           {reviews.map((review) => (
-            <Card key={review.id} className="bg-muted">
+            <Card key={review.id} className="bg-card/95">
               <CardContent className="py-4">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
                   <div className="flex items-center gap-2">
@@ -66,6 +67,7 @@ export default function ReviewEntryPage() {
                       <Button
                         size="sm"
                         variant="destructive"
+                        className="w-full sm:w-auto"
                         disabled={deleting === review.id}
                         onClick={() => handleDelete(review.id)}
                       >
@@ -80,6 +82,7 @@ export default function ReviewEntryPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

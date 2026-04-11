@@ -67,9 +67,9 @@ export default function EditProfilePage() {
   if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-background px-6 py-16">
-      <div className="mx-auto max-w-2xl space-y-6">
-        <h1 className="text-3xl font-bold">Edit Profile</h1>
+    <div className="sb-page">
+      <div className="sb-container max-w-3xl space-y-6">
+        <h1 className="sb-title">Edit Profile</h1>
         <Card>
           <CardHeader>
             <CardTitle>Update Your Information</CardTitle>
