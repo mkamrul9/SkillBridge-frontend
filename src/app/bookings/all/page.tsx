@@ -55,15 +55,15 @@ export default function AllBookingsPage() {
   if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-background px-6 py-16">
-      <div className="mx-auto max-w-4xl space-y-6">
-        <h1 className="text-3xl font-bold">All Bookings</h1>
+    <div className="sb-page">
+      <div className="sb-container">
+        <h1 className="sb-title">All Bookings</h1>
         {bookings.length === 0 ? (
           <div className="text-muted-foreground">No bookings found.</div>
         ) : (
           <div className="space-y-4">
             {bookings.map((booking) => (
-              <Card key={booking.id}>
+              <Card key={booking.id} className="border-border/80 bg-card/95">
                 <CardHeader>
                   <CardTitle>
                     {booking.student?.name || "Student"} booked {booking.tutor?.user?.name || "Tutor"}
@@ -73,7 +73,7 @@ export default function AllBookingsPage() {
                   <div className="mb-2 text-sm text-muted-foreground">
                     <span>Start: {new Date(booking.startTime).toLocaleString()}</span>
                     <span className="ml-4">End: {new Date(booking.endTime).toLocaleString()}</span>
-                    <span className="ml-4">Status: <span className="capitalize">{booking.status.toLowerCase()}</span></span>
+                    <span className="ml-4">Status: <span className="rounded-full bg-primary/10 px-2 py-0.5 capitalize">{booking.status.toLowerCase()}</span></span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="text-base">Booking ID: {booking.id}</div>

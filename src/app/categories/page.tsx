@@ -43,14 +43,15 @@ export default function CategoriesPage() {
   if (error) return <div className="text-red-500 text-center">Error: {error}</div>;
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Categories</h1>
+    <div className="sb-page">
+      <div className="sb-container">
+      <div className="sb-header mb-4">
+        <h1 className="sb-title">Categories</h1>
         {user?.role === "ADMIN" && (
           <Button onClick={() => router.push("/categories/create")}>Create Category</Button>
         )}
       </div>
-      <Card>
+      <Card className="border-border/80 bg-card/95">
         <CardHeader>
           <CardTitle>Categories</CardTitle>
         </CardHeader>
@@ -77,6 +78,7 @@ export default function CategoriesPage() {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

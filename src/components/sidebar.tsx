@@ -3,42 +3,79 @@ import Link from "next/link";
 import { useUser } from "@/lib/user-context";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
+
+type NavItem = { href: string; label: string };
+type NavSection = { title: string; items: NavItem[] };
+
+const getSectionsByRole = (role?: string): NavSection[] => {
+  if (role === "ADMIN") {
+    return [
+      {
+        title: "Admin",
+        items: [
+          { href: "/admin/dashboard", label: "Overview" },
+          { href: "/admin/users", label: "Manage Users" },
+          { href: "/categories", label: "Categories" },
+          { href: "/reviews/all", label: "All Reviews" },
+          { href: "/bookings/all", label: "All Bookings" },
+        ],
+      },
+      {
+        title: "Account",
+        items: [{ href: "/profile", label: "Profile" }],
+      },
+    ];
+  }
+
+  if (role === "TUTOR") {
+    return [
+      {
+        title: "Tutor",
+        items: [
+          { href: "/dashboard", label: "Dashboard" },
+          { href: "/bookings", label: "My Bookings" },
+          { href: "/reviews", label: "My Reviews" },
+        ],
+      },
+      {
+        title: "Account",
+        items: [{ href: "/profile", label: "Profile" }],
+      },
+    ];
+  }
+
+  return [
+    {
+      title: "Student",
+      items: [
+        { href: "/dashboard", label: "Dashboard" },
+        { href: "/bookings", label: "My Bookings" },
+        { href: "/reviews", label: "My Reviews" },
+        { href: "/tutors/become-tutor", label: "Become a Tutor" },
+      ],
+    },
+    {
+      title: "Account",
+      items: [{ href: "/profile", label: "Profile" }],
+    },
+  ];
+};
 
 export function Sidebar() {
   const { user } = useUser();
+  const pathname = usePathname();
   const [visible, setVisible] = useState(true);
-
-  let links = [
-    { href: "/dashboard", label: "Dashboard" },
-    { href: "/profile", label: "Profile" },
-  ];
-
-  if (user) {
-    if (user.role === "ADMIN") {
-      links = [
-        { href: "/admin/dashboard", label: "Admin Dashboard" },
-        { href: "/admin/users", label: "Manage Users" },
-        { href: "/categories", label: "Categories" },
-        { href: "/reviews", label: "All Reviews" },
-        { href: "/bookings/all", label: "All Bookings" },
-      ];
-    } else if (user.role === "TUTOR") {
-      links = [
-        { href: "/dashboard", label: "Dashboard" },
-        { href: "/reviews", label: "My Reviews" },
-        { href: "/bookings", label: "My Bookings" },
-        { href: "/profile", label: "Profile" },
-      ];
-    } else if (user.role === "STUDENT") {
-      links = [
-        { href: "/dashboard", label: "Dashboard" },
-        { href: "/bookings", label: "My Bookings" },
-        { href: "/reviews", label: "My Reviews" },
-        { href: "/profile", label: "Profile" },
-        { href: "/tutors/become-tutor", label: "Become a Tutor" },
-      ];
-    }
-  }
+  const sections = getSectionsByRole(user?.role);
+  const seenHrefs = new Set<string>();
+  const normalizedSections = sections.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => {
+      if (seenHrefs.has(item.href)) return false;
+      seenHrefs.add(item.href);
+      return true;
+    }),
+  }));
 
   if (!visible) {
     return (
@@ -51,16 +88,34 @@ export function Sidebar() {
     );
   }
   return (
-    <aside className="hidden md:flex w-28 sm:w-48 md:w-56 min-h-screen bg-muted border-r px-3 py-4 sm:py-8 flex-col gap-4 sticky top-0">
+    <aside className="sticky top-0 hidden min-h-screen w-64 flex-col gap-4 border-r bg-card/80 px-3 py-5 backdrop-blur md:flex">
       <div className="flex items-center justify-between mb-6">
         <span className="font-bold text-sm sm:text-lg">SkillBridge</span>
         <Button size="sm" variant="ghost" onClick={() => setVisible(false)} title="Hide Sidebar">×</Button>
       </div>
-      <nav className="flex flex-col gap-1">
-        {links.map((link) => (
-          <Link key={link.href} href={link.href} className="block py-2 px-2 rounded hover:bg-primary/10">
-            <span className="text-xs sm:text-sm truncate max-w-[9rem]">{link.label}</span>
-          </Link>
+      <nav className="flex flex-col gap-4">
+        {normalizedSections.map((section) => (
+          <div key={section.title} className="space-y-1">
+            <p className="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {section.title}
+            </p>
+            {section.items.map((link) => {
+              const active = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`block rounded-md px-2 py-2 text-sm transition-colors ${
+                    active
+                      ? "bg-primary/15 text-primary"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  <span className="truncate">{link.label}</span>
+                </Link>
+              );
+            })}
+          </div>
         ))}
       </nav>
     </aside>

@@ -21,18 +21,19 @@ export default function AllReviewsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="flex justify-center items-center min-h-[200px]">Loading...</div>;
+  if (loading) return <div className="flex min-h-50 items-center justify-center">Loading...</div>;
   if (error) return <div className="text-red-500 text-center">Error: {error}</div>;
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-4">{user?.role === "ADMIN" ? "All Reviews" : "My Reviews"}</h1>
+    <div className="sb-page">
+      <div className="sb-container max-w-5xl">
+      <h1 className="sb-title mb-4">{user?.role === "ADMIN" ? "All Reviews" : "My Reviews"}</h1>
       {reviews.length === 0 ? (
         <div className="text-muted-foreground">No reviews found.</div>
       ) : (
         <div className="space-y-4">
           {reviews.map((review) => (
-            <Card key={review.id} className="bg-muted">
+            <Card key={review.id} className="border-border/80 bg-card/95">
               <CardContent className="py-4">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-semibold">{review.student?.name || "Student"}</span>
@@ -46,6 +47,7 @@ export default function AllReviewsPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

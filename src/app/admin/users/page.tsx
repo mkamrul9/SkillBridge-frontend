@@ -70,10 +70,10 @@ export default function AdminUsers() {
   if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-background px-4 sm:px-6 py-16">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold">Manage Users</h1>
+    <div className="sb-page">
+      <div className="sb-container">
+        <div className="sb-header">
+          <h1 className="sb-title">Manage Users</h1>
           <Link href="/admin/dashboard">
             <Button variant="outline" className="w-full sm:w-auto">Back to Dashboard</Button>
           </Link>
@@ -81,7 +81,7 @@ export default function AdminUsers() {
 
         <div className="grid gap-4">
           {users.map((user) => (
-            <Card key={user.id}>
+            <Card key={user.id} className="border-border/80 bg-card/95">
               <CardHeader>
                 <CardTitle className="text-lg">{user.name}</CardTitle>
               </CardHeader>

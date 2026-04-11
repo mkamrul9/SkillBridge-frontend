@@ -18,8 +18,8 @@ const debugError = (...args: unknown[]) => {
 
 function TutorsPageSkeleton() {
   return (
-    <div className="min-h-screen bg-background px-6 py-16">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <div className="sb-page">
+      <div className="sb-container space-y-6">
         <Skeleton className="h-10 w-24" />
         <Skeleton className="h-10 w-56" />
 
@@ -164,8 +164,8 @@ export default function TutorsPage() {
   if (loading) return <TutorsPageSkeleton />;
 
   return (
-    <div className="min-h-screen bg-background px-6 py-16">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <div className="sb-page">
+      <div className="sb-container space-y-6">
         <button
           className="mb-4 px-4 py-2 border rounded text-sm hover:bg-muted"
           type="button"
@@ -312,7 +312,7 @@ export default function TutorsPage() {
               : "N/A";
 
             return (
-              <Card key={tutor.id} className="flex h-full flex-col transition-shadow hover:shadow-lg">
+              <Card key={tutor.id} className="flex h-full flex-col border-border/80 bg-card/95 transition-shadow hover:shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-lg">{tutor.user.name}</CardTitle>
                 </CardHeader>

@@ -255,3 +255,25 @@
     color: var(--foreground);
   }
 }
+
+@layer utilities {
+  .sb-page {
+    @apply min-h-screen bg-background px-4 py-10 sm:px-6 lg:px-8;
+  }
+
+  .sb-container {
+    @apply mx-auto w-full max-w-7xl space-y-6;
+  }
+
+  .sb-header {
+    @apply flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center;
+  }
+
+  .sb-title {
+    @apply text-3xl font-bold tracking-tight text-foreground;
+  }
+
+  .sb-subtle {
+    @apply text-sm text-muted-foreground;
+  }
+}
