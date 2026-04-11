@@ -1,11 +1,21 @@
 "use client";
 import Link from "next/link";
 import { useUser } from "@/lib/user-context";
-import { useState } from "react";
+import { useState, type ComponentType } from "react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
+import {
+  BookOpenCheck,
+  Briefcase,
+  Grid3X3,
+  LayoutDashboard,
+  Menu,
+  Shield,
+  User,
+  Users,
+} from "lucide-react";
 
-type NavItem = { href: string; label: string };
+type NavItem = { href: string; label: string; icon: ComponentType<{ className?: string }> };
 type NavSection = { title: string; items: NavItem[] };
 
 const getSectionsByRole = (role?: string): NavSection[] => {
@@ -14,16 +24,16 @@ const getSectionsByRole = (role?: string): NavSection[] => {
       {
         title: "Admin",
         items: [
-          { href: "/admin/dashboard", label: "Overview" },
-          { href: "/admin/users", label: "Manage Users" },
-          { href: "/categories", label: "Categories" },
-          { href: "/reviews/all", label: "All Reviews" },
-          { href: "/bookings/all", label: "All Bookings" },
+          { href: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
+          { href: "/admin/users", label: "Manage Users", icon: Users },
+          { href: "/categories", label: "Categories", icon: Grid3X3 },
+          { href: "/reviews/all", label: "All Reviews", icon: BookOpenCheck },
+          { href: "/bookings/all", label: "All Bookings", icon: Briefcase },
         ],
       },
       {
         title: "Account",
-        items: [{ href: "/profile", label: "Profile" }],
+        items: [{ href: "/profile", label: "Profile", icon: User }],
       },
     ];
   }
@@ -33,14 +43,14 @@ const getSectionsByRole = (role?: string): NavSection[] => {
       {
         title: "Tutor",
         items: [
-          { href: "/dashboard", label: "Dashboard" },
-          { href: "/bookings", label: "My Bookings" },
-          { href: "/reviews", label: "My Reviews" },
+          { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+          { href: "/bookings", label: "My Bookings", icon: Briefcase },
+          { href: "/reviews", label: "My Reviews", icon: BookOpenCheck },
         ],
       },
       {
         title: "Account",
-        items: [{ href: "/profile", label: "Profile" }],
+        items: [{ href: "/profile", label: "Profile", icon: User }],
       },
     ];
   }
@@ -49,15 +59,15 @@ const getSectionsByRole = (role?: string): NavSection[] => {
     {
       title: "Student",
       items: [
-        { href: "/dashboard", label: "Dashboard" },
-        { href: "/bookings", label: "My Bookings" },
-        { href: "/reviews", label: "My Reviews" },
-        { href: "/tutors/become-tutor", label: "Become a Tutor" },
+        { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+        { href: "/bookings", label: "My Bookings", icon: Briefcase },
+        { href: "/reviews", label: "My Reviews", icon: BookOpenCheck },
+        { href: "/tutors/become-tutor", label: "Become a Tutor", icon: Shield },
       ],
     },
     {
       title: "Account",
-      items: [{ href: "/profile", label: "Profile" }],
+      items: [{ href: "/profile", label: "Profile", icon: User }],
     },
   ];
 };
@@ -80,10 +90,11 @@ export function Sidebar() {
   if (!visible) {
     return (
       <button
-        className="fixed top-4 left-4 z-50 bg-muted border px-3 py-2 rounded shadow"
+        className="fixed left-4 top-4 z-50 rounded-md border bg-card p-2 shadow"
         onClick={() => setVisible(true)}
+        aria-label="Show sidebar"
       >
-        Show Sidebar
+        <Menu className="h-5 w-5" />
       </button>
     );
   }
@@ -96,16 +107,17 @@ export function Sidebar() {
         <div className="flex gap-2 overflow-x-auto pb-1">
           {normalizedSections.flatMap((section) => section.items).map((link) => {
             const active = pathname === link.href;
+            const Icon = link.icon;
             return (
               <Link
                 key={`mobile-${link.href}`}
                 href={link.href}
-                className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  active
+                className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${active
                     ? "border-primary bg-primary/15 text-primary"
                     : "border-border bg-background text-muted-foreground"
-                }`}
+                  }`}
               >
+                <Icon className="h-3.5 w-3.5" />
                 {link.label}
               </Link>
             );
@@ -116,7 +128,9 @@ export function Sidebar() {
       <aside className="sticky top-0 hidden min-h-screen w-64 flex-col gap-4 border-r bg-card/80 px-3 py-5 backdrop-blur md:flex">
         <div className="mb-6 flex items-center justify-between">
           <span className="font-bold text-sm sm:text-lg">SkillBridge</span>
-          <Button size="sm" variant="ghost" onClick={() => setVisible(false)} title="Hide Sidebar">×</Button>
+          <Button size="sm" variant="ghost" onClick={() => setVisible(false)} title="Hide Sidebar" aria-label="Hide sidebar">
+            <Menu className="h-4 w-4" />
+          </Button>
         </div>
         <nav className="flex flex-col gap-4">
           {normalizedSections.map((section) => (
@@ -126,15 +140,17 @@ export function Sidebar() {
               </p>
               {section.items.map((link) => {
                 const active = pathname === link.href;
+                const Icon = link.icon;
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`block rounded-md px-2 py-2 text-sm transition-colors ${active
-                        ? "bg-primary/15 text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    className={`flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors ${active
+                      ? "bg-primary/15 text-primary"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }`}
                   >
+                    <Icon className="h-4 w-4 shrink-0" />
                     <span className="truncate">{link.label}</span>
                   </Link>
                 );

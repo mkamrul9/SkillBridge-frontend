@@ -11,6 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { DEFAULT_AVATAR } from "@/lib/default-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Facebook, Link2, Linkedin, Mail, MessageCircle, Share2, Twitter } from "lucide-react";
 
 function TutorDetailsSkeleton() {
   return (
@@ -74,6 +75,35 @@ export default function TutorDetailsPage() {
       toast.success("Tutor profile link copied");
     } catch {
       toast.error("Failed to copy profile link");
+    }
+  };
+
+  const openShare = async (platform: "whatsapp" | "facebook" | "linkedin" | "x" | "email" | "native") => {
+    const url = window.location.href;
+    const text = `Check out tutor ${tutor?.user?.name || "profile"} on SkillBridge`;
+    const encodedUrl = encodeURIComponent(url);
+    const encodedText = encodeURIComponent(text);
+
+    if (platform === "native" && navigator.share) {
+      try {
+        await navigator.share({ title: tutor?.user?.name || "Tutor Profile", text, url });
+        return;
+      } catch {
+        return;
+      }
+    }
+
+    const shareMap: Record<string, string> = {
+      whatsapp: `https://wa.me/?text=${encodedText}%20${encodedUrl}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+      x: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+      email: `mailto:?subject=${encodedText}&body=${encodedText}%0A${encodedUrl}`,
+    };
+
+    const shareUrl = shareMap[platform];
+    if (shareUrl) {
+      window.open(shareUrl, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -159,9 +189,27 @@ export default function TutorDetailsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background px-4 sm:px-6 py-16">
+    <div className="sb-page">
       <div className="mx-auto max-w-4xl space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+        <section className="rounded-2xl border bg-linear-to-r from-primary/10 via-secondary/10 to-accent/10 p-4 sm:p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary">Tutor Profile</p>
+              <h1 className="text-2xl font-bold">{tutor.user.name}</h1>
+              <p className="text-sm text-muted-foreground">Share this tutor with students and guardians across platforms.</p>
+            </div>
+            <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:grid-cols-3">
+              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={() => openShare("whatsapp")}><MessageCircle className="h-4 w-4" />WhatsApp</button>
+              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={() => openShare("facebook")}><Facebook className="h-4 w-4" />Facebook</button>
+              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={() => openShare("linkedin")}><Linkedin className="h-4 w-4" />LinkedIn</button>
+              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={() => openShare("x")}><Twitter className="h-4 w-4" />X</button>
+              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={() => openShare("email")}><Mail className="h-4 w-4" />Email</button>
+              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={copyProfileLink}><Link2 className="h-4 w-4" />Copy Link</button>
+            </div>
+          </div>
+        </section>
+
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-1">
           <button
             className="w-full sm:w-auto px-4 py-2 rounded bg-muted hover:bg-muted/70 border border-border text-base text-center"
             type="button"
@@ -171,11 +219,12 @@ export default function TutorDetailsPage() {
             Back
           </button>
           <button
-            className="w-full sm:w-auto px-4 py-2 rounded border border-border text-base text-center hover:bg-muted"
+            className="inline-flex w-full items-center justify-center gap-2 rounded border border-border px-4 py-2 text-base hover:bg-muted sm:w-auto"
             type="button"
             aria-label="Copy tutor profile link"
             onClick={copyProfileLink}
           >
+            <Share2 className="h-4 w-4" />
             Copy Profile Link
           </button>
           {(user as any)?.role === "STUDENT" && (
@@ -196,7 +245,7 @@ export default function TutorDetailsPage() {
             </div>
           )}
         </div>
-        <Card>
+        <Card className="overflow-hidden border-border/80 bg-card/95 shadow-sm">
           <CardHeader>
             <CardTitle className="text-2xl">{tutor.user.name}</CardTitle>
           </CardHeader>

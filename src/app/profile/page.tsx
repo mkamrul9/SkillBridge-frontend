@@ -5,7 +5,7 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { getApiBaseUrl } from "@/lib/api-url";
@@ -17,6 +17,10 @@ export default function ProfilePage() {
     newPassword: "",
     confirmPassword: "",
   });
+  const [profileForm, setProfileForm] = useState({ name: "", phone: "" });
+  const [tutorBio, setTutorBio] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [savingBio, setSavingBio] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
 
   if (!user) {
@@ -31,6 +35,84 @@ export default function ProfilePage() {
     });
     setUser(null);
     window.location.href = "/";
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    setProfileForm({ name: user.name || "", phone: user.phone || "" });
+    if (user.role === "TUTOR") {
+      const base = getApiBaseUrl();
+      const url = base.endsWith("/api") ? `${base}/user/me` : `${base}/api/user/me`;
+      fetch(url, { credentials: "include" })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.success) {
+            setTutorBio(data.data?.tutorProfile?.bio || "");
+          }
+        })
+        .catch(() => {
+          setTutorBio("");
+        });
+    }
+  }, [user]);
+
+  const handleSaveProfile = async () => {
+    if (!profileForm.name.trim()) {
+      toast.error("Name is required.");
+      return;
+    }
+    setSavingProfile(true);
+    try {
+      const base = getApiBaseUrl();
+      const url = base.endsWith("/api") ? `${base}/students/profile` : `${base}/api/students/profile`;
+      const res = await fetch(url, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          name: profileForm.name.trim(),
+          phone: profileForm.phone.trim(),
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.message || "Failed to update profile");
+      }
+      setUser({
+        ...user,
+        name: profileForm.name.trim(),
+        phone: profileForm.phone.trim(),
+      });
+      toast.success("Profile updated successfully.");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update profile");
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  const handleSaveBio = async () => {
+    if (user.role !== "TUTOR") return;
+    setSavingBio(true);
+    try {
+      const base = getApiBaseUrl();
+      const url = base.endsWith("/api") ? `${base}/tutors/profile` : `${base}/api/tutors/profile`;
+      const res = await fetch(url, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ bio: tutorBio.trim() }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.message || "Failed to update bio");
+      }
+      toast.success("Tutor bio updated.");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update bio");
+    } finally {
+      setSavingBio(false);
+    }
   };
 
   const handleChangePassword = async () => {
@@ -107,7 +189,7 @@ export default function ProfilePage() {
           <CardHeader>
             <CardTitle>Profile Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="shrink-0">
                 {user.image ? (
@@ -124,7 +206,10 @@ export default function ProfilePage() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
                     <p className="text-sm text-muted-foreground">Name</p>
-                    <p>{user.name}</p>
+                    <Input
+                      value={profileForm.name}
+                      onChange={(e) => setProfileForm((prev) => ({ ...prev, name: e.target.value }))}
+                    />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Email</p>
@@ -132,7 +217,11 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Phone</p>
-                    <p>{user.phone || "Not provided"}</p>
+                    <Input
+                      value={profileForm.phone}
+                      onChange={(e) => setProfileForm((prev) => ({ ...prev, phone: e.target.value }))}
+                      placeholder="Enter phone number"
+                    />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Role</p>
@@ -141,6 +230,29 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
+            <div className="flex justify-end">
+              <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full sm:w-auto">
+                {savingProfile ? "Saving..." : "Save Name and Phone"}
+              </Button>
+            </div>
+
+            {user.role === "TUTOR" && (
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">Tutor Bio</p>
+                <textarea
+                  value={tutorBio}
+                  onChange={(e) => setTutorBio(e.target.value)}
+                  rows={4}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  placeholder="Tell students about your teaching style and experience"
+                />
+                <div className="flex justify-end">
+                  <Button variant="outline" onClick={handleSaveBio} disabled={savingBio} className="w-full sm:w-auto">
+                    {savingBio ? "Updating..." : "Save Bio"}
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 

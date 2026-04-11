@@ -8,6 +8,7 @@ import { authClient } from "@/lib/auth-client";
 import {
   BookOpenCheck,
   Briefcase,
+  Orbit,
   Grid3X3,
   LayoutDashboard,
   Moon,
@@ -89,7 +90,12 @@ export function Navbar() {
   return (
     <nav className="w-full bg-background border-b sticky top-0 z-40">
       <div className="mx-auto flex w-full max-w-none items-center gap-4 px-4 py-2 md:px-6">
-        <span className="font-bold text-lg tracking-tight flex-1">SkillBridge</span>
+        <span className="flex flex-1 items-center gap-2 font-bold text-lg tracking-tight">
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary/15 text-primary">
+            <Orbit className="h-4 w-4" />
+          </span>
+          SkillBridge
+        </span>
         {/* Desktop links */}
         <div className="hidden sm:flex items-center gap-3">
           {uniqueLinks.map((link) => (
@@ -171,15 +177,15 @@ function DesktopUserMenu({ user, onSignOut }: any) {
             {quickLinks.map((item) => {
               const Icon = item.icon;
               return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-2 rounded px-2 py-2 text-sm hover:bg-muted"
-                onClick={() => setOpen(false)}
-              >
-                <Icon className="h-4 w-4 text-muted-foreground" />
-                {item.label}
-              </Link>
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex items-center gap-2 rounded px-2 py-2 text-sm hover:bg-muted"
+                  onClick={() => setOpen(false)}
+                >
+                  <Icon className="h-4 w-4 text-muted-foreground" />
+                  {item.label}
+                </Link>
               );
             })}
           </div>
