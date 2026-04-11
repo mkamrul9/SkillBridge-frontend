@@ -15,7 +15,7 @@ export default function ReviewEntryPage() {
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const pageSize = 8;
+  const pageSize = 5;
   const { user } = useUser();
   const { confirm } = useConfirm();
   const handleDelete = async (id: string) => {
@@ -65,7 +65,7 @@ export default function ReviewEntryPage() {
         ) : (
           <div className="space-y-4">
             {pagedReviews.map((review) => (
-              <Card key={review.id} className="bg-card/95">
+              <Card key={review.id} className="border-border/80 bg-card/95 shadow-sm">
                 <CardContent className="py-4">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
                     <div className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export default function ReviewEntryPage() {
                       </div>
                     )}
                   </div>
-                  <div className="text-base">{review.comment || <span className="text-muted-foreground">No comment</span>}</div>
+                  <div className="rounded-md bg-muted/40 p-3 text-base">{review.comment || <span className="text-muted-foreground">No comment</span>}</div>
                 </CardContent>
               </Card>
             ))}

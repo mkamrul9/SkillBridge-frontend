@@ -19,6 +19,10 @@ export default function ProfilePage() {
   });
   const [profileForm, setProfileForm] = useState({ name: "", phone: "" });
   const [tutorBio, setTutorBio] = useState("");
+  const [preferences, setPreferences] = useState({
+    bookingReminders: true,
+    productUpdates: true,
+  });
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingBio, setSavingBio] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
@@ -185,18 +189,22 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <Card>
+        <Card className="border-border/80 bg-card/95 shadow-sm">
           <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
+            <CardTitle className="flex items-center justify-between">
+              <span>Profile Information</span>
+              <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">Editable</span>
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="rounded-xl border bg-muted/30 p-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="shrink-0">
                 {user.image ? (
                   <img
                     src={user.image}
                     alt={user.name}
-                    className="h-24 w-24 sm:h-32 sm:w-32 rounded-full object-cover"
+                    className="h-24 w-24 rounded-full border-2 border-primary/20 object-cover sm:h-28 sm:w-28"
                   />
                 ) : (
                   <div className="h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-muted" />
@@ -213,7 +221,7 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Email</p>
-                    <p>{user.email}</p>
+                    <p className="rounded-md bg-background px-3 py-2 text-sm">{user.email}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Phone</p>
@@ -225,10 +233,11 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Role</p>
-                    <p className="capitalize">{user.role?.toLowerCase()}</p>
+                    <p className="rounded-md bg-background px-3 py-2 text-sm capitalize">{user.role?.toLowerCase()}</p>
                   </div>
                 </div>
               </div>
+            </div>
             </div>
             <div className="flex justify-end">
               <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full sm:w-auto">
@@ -256,7 +265,7 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-border/80 bg-card/95 shadow-sm">
           <CardHeader>
             <CardTitle>Security</CardTitle>
           </CardHeader>
@@ -287,6 +296,31 @@ export default function ProfilePage() {
                 {changingPassword ? "Updating..." : "Change Password"}
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/80 bg-card/95 shadow-sm">
+          <CardHeader>
+            <CardTitle>Preferences</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <label className="flex items-center justify-between rounded-md border bg-muted/30 px-3 py-2 text-sm">
+              <span>Booking reminders</span>
+              <input
+                type="checkbox"
+                checked={preferences.bookingReminders}
+                onChange={(e) => setPreferences((prev) => ({ ...prev, bookingReminders: e.target.checked }))}
+              />
+            </label>
+            <label className="flex items-center justify-between rounded-md border bg-muted/30 px-3 py-2 text-sm">
+              <span>Product updates</span>
+              <input
+                type="checkbox"
+                checked={preferences.productUpdates}
+                onChange={(e) => setPreferences((prev) => ({ ...prev, productUpdates: e.target.checked }))}
+              />
+            </label>
+            <p className="text-xs text-muted-foreground">These preferences are stored on this device for now.</p>
           </CardContent>
         </Card>
 

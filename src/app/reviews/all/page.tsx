@@ -10,7 +10,7 @@ export default function AllReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
-  const pageSize = 8;
+  const pageSize = 5;
   const { user } = useUser();
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function AllReviewsPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             {pagedReviews.map((review) => (
-              <Card key={review.id} className="border-border/80 bg-card/95">
+              <Card key={review.id} className="border-border/80 bg-card/95 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                 <CardHeader>
                   <CardTitle className="text-lg">{review.student?.name || "Student"}</CardTitle>
                   <p className="text-xs text-muted-foreground">{new Date(review.createdAt).toLocaleDateString()}</p>
@@ -54,7 +54,7 @@ export default function AllReviewsPage() {
                     <span className="text-yellow-500">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
                     <span className="text-xs text-muted-foreground">Tutor: {review.tutor?.user?.name || "Tutor"}</span>
                   </div>
-                  <div className="text-base">{review.comment || <span className="text-muted-foreground">No comment</span>}</div>
+                  <div className="rounded-md bg-muted/40 p-3 text-base">{review.comment || <span className="text-muted-foreground">No comment</span>}</div>
                 </CardContent>
               </Card>
             ))}

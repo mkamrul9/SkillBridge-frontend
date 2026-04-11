@@ -13,7 +13,7 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
-  const pageSize = 9;
+  const pageSize = 5;
   const { user } = useUser();
   const router = useRouter();
   const { confirm } = useConfirm();
@@ -88,9 +88,12 @@ export default function CategoriesPage() {
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {pagedCategories.map((cat) => (
-            <Card key={cat.id} className="border-border/80 bg-card/95">
+            <Card key={cat.id} className="border-border/80 bg-card/95 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
               <CardHeader>
-                <CardTitle className="text-xl">{cat.name}</CardTitle>
+                <CardTitle className="text-xl flex items-center justify-between">
+                  <span>{cat.name}</span>
+                  <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">Category</span>
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-sm text-muted-foreground">{cat.description || "No description provided."}</p>

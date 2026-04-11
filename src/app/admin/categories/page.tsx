@@ -9,7 +9,7 @@ export default function AdminCategoriesPage() {
   const [editName, setEditName] = useState("");
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
-  const pageSize = 10;
+  const pageSize = 5;
   const { confirm } = useConfirm();
 
   const load = () => getAllCategories().then(setCategories).catch(e => setError(e.message));

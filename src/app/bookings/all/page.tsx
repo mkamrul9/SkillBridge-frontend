@@ -12,7 +12,7 @@ export default function AllBookingsPage() {
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const pageSize = 6;
+  const pageSize = 5;
   const { user } = useUser();
   const { confirm } = useConfirm();
 
@@ -89,7 +89,7 @@ export default function AllBookingsPage() {
         ) : (
           <div className="space-y-4">
             {pagedBookings.map((booking) => (
-              <Card key={booking.id} className="border-border/80 bg-card/95">
+              <Card key={booking.id} className="overflow-hidden border-border/80 bg-card/95 shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-xl">
                     {booking.student?.name || "Student"} booked {booking.tutor?.user?.name || "Tutor"}
@@ -101,7 +101,7 @@ export default function AllBookingsPage() {
                     <span>End: {new Date(booking.endTime).toLocaleString()}</span>
                     <span>
                       Status:{" "}
-                      <span className={`rounded-full px-2 py-0.5 capitalize ${getStatusTone(booking.status)}`}>
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${getStatusTone(booking.status)}`}>
                         {booking.status.toLowerCase()}
                       </span>
                     </span>
