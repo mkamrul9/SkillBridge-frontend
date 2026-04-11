@@ -9,6 +9,42 @@ import { getApiBaseUrl } from "@/lib/api-url";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useConfirm } from "@/components/confirm-provider";
 
+function BookingTimeline({ status }: { status: string }) {
+  const normalized = String(status || "").toLowerCase();
+  const steps = ["requested", "confirmed", "completed"] as const;
+
+  const activeIndex = normalized === "completed"
+    ? 2
+    : normalized === "confirmed"
+      ? 1
+      : 0;
+
+  const cancelled = normalized === "cancelled";
+
+  return (
+    <div className="rounded-lg border border-border/70 bg-muted/25 p-3">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Progress Timeline</p>
+      <div className="flex items-center gap-2">
+        {steps.map((step, idx) => {
+          const done = !cancelled && idx <= activeIndex;
+          return (
+            <div key={step} className="flex flex-1 items-center gap-2">
+              <div className={`h-2.5 w-2.5 rounded-full ${done ? "bg-emerald-500" : "bg-border"}`} />
+              <span className={`text-xs capitalize ${done ? "text-foreground" : "text-muted-foreground"}`}>{step}</span>
+              {idx < steps.length - 1 && (
+                <div className={`h-[2px] flex-1 ${done ? "bg-emerald-500/70" : "bg-border"}`} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {cancelled && (
+        <p className="mt-2 text-xs font-medium text-rose-600">This booking was cancelled before completion.</p>
+      )}
+    </div>
+  );
+}
+
 function BookingsPageSkeleton() {
   return (
     <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-8">
@@ -238,6 +274,7 @@ export default function BookingsPage() {
                         <div>
                           <span className="font-medium">End:</span> {new Date(booking.endTime).toLocaleString()}
                         </div>
+                        <BookingTimeline status={booking.status} />
                       </div>
                       <div className="md:col-span-1 flex flex-col gap-2 items-stretch">
                         <a href={`/bookings/${booking.id}`}>
@@ -309,6 +346,7 @@ export default function BookingsPage() {
                         <div>
                           <span className="font-medium">End:</span> {new Date(booking.endTime).toLocaleString()}
                         </div>
+                        <BookingTimeline status={booking.status} />
                       </div>
                       <div className="md:col-span-1 flex flex-col gap-2 items-stretch">
                         <a href={`/bookings/${booking.id}`}>

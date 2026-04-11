@@ -121,8 +121,8 @@ export default function TutorDetailsPage() {
           const firstCategoryId = data.data?.categories?.[0]?.id;
           if (firstCategoryId) {
             const relatedUrl = base.endsWith("/api")
-              ? `${base}/tutors?categoryId=${firstCategoryId}&limit=4&sortBy=rating&sortOrder=desc`
-              : `${base}/api/tutors?categoryId=${firstCategoryId}&limit=4&sortBy=rating&sortOrder=desc`;
+              ? `${base}/tutors?categoryId=${firstCategoryId}&limit=5&sortBy=rating&sortOrder=desc`
+              : `${base}/api/tutors?categoryId=${firstCategoryId}&limit=5&sortBy=rating&sortOrder=desc`;
 
             fetch(relatedUrl, { credentials: "include" })
               .then((res) => res.json())

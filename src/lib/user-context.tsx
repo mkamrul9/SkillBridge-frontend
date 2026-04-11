@@ -11,7 +11,7 @@ type UserContextType = {
 
 export const UserContext = createContext<UserContextType>({
   user: null,
-  setUser: (_user: UserType) => {},
+  setUser: (_user: UserType) => { },
 });
 
 export function UserProvider({ children }: { children: React.ReactNode }) {

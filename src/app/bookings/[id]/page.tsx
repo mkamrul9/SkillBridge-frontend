@@ -8,6 +8,35 @@ import { toast } from "sonner";
 import { getApiBaseUrl } from "@/lib/api-url";
 import { useConfirm } from "@/components/confirm-provider";
 
+function BookingTimeline({ status }: { status: string }) {
+  const normalized = String(status || "").toLowerCase();
+  const steps = ["requested", "confirmed", "completed"] as const;
+  const activeIndex = normalized === "completed"
+    ? 2
+    : normalized === "confirmed"
+      ? 1
+      : 0;
+  const cancelled = normalized === "cancelled";
+
+  return (
+    <div className="rounded-lg border border-border/70 bg-muted/20 p-4">
+      <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Booking Progress</p>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {steps.map((step, idx) => {
+          const done = !cancelled && idx <= activeIndex;
+          return (
+            <div key={step} className="rounded-md border border-border/60 bg-card px-3 py-2 text-center">
+              <div className={`mx-auto mb-1 h-2.5 w-2.5 rounded-full ${done ? "bg-emerald-500" : "bg-border"}`} />
+              <p className={`text-xs capitalize ${done ? "text-foreground" : "text-muted-foreground"}`}>{step}</p>
+            </div>
+          );
+        })}
+      </div>
+      {cancelled && <p className="mt-3 text-xs font-medium text-rose-600">This booking has been cancelled.</p>}
+    </div>
+  );
+}
+
 export default function BookingDetailsPage() {
   const params = useParams();
   const router = useRouter();
@@ -156,6 +185,7 @@ export default function BookingDetailsPage() {
               <div><span className="font-medium">End:</span> {new Date(booking.endTime).toLocaleString()}</div>
               <div><span className="font-medium">Tutor:</span> {booking.tutor?.user?.name}</div>
               <div><span className="font-medium">Student:</span> {booking.student?.name}</div>
+              {(isStudent || isTutor) && <BookingTimeline status={booking.status} />}
             </div>
             <div className="mt-4 flex gap-2">
               <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => router.push("/bookings")}>Back</Button>

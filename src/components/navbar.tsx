@@ -8,6 +8,7 @@ import { authClient } from "@/lib/auth-client";
 import {
   BookOpenCheck,
   Briefcase,
+  GraduationCap,
   Orbit,
   Grid3X3,
   LayoutDashboard,
@@ -90,12 +91,12 @@ export function Navbar() {
   return (
     <nav className="w-full bg-background border-b sticky top-0 z-40">
       <div className="mx-auto flex w-full max-w-none items-center gap-4 px-4 py-2 md:px-6">
-        <span className="flex flex-1 items-center gap-2 font-bold text-lg tracking-tight">
+        <Link href="/" className="flex flex-1 items-center gap-2 font-bold text-lg tracking-tight">
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary/15 text-primary">
             <Orbit className="h-4 w-4" />
           </span>
           SkillBridge
-        </span>
+        </Link>
         {/* Desktop links */}
         <div className="hidden sm:flex items-center gap-3">
           {uniqueLinks.map((link) => (
@@ -121,7 +122,16 @@ export function Navbar() {
           </Button>
           {user ? (
             <DesktopUserMenu user={user} onSignOut={handleSignOut} />
-          ) : null}
+          ) : (
+            <>
+              <Link href="/login">
+                <Button size="sm" variant="ghost">Sign In</Button>
+              </Link>
+              <Link href="/register">
+                <Button size="sm">Sign Up</Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile menu button */}
@@ -272,7 +282,29 @@ function MobileMenu({ uniqueLinks, pathname, user, onSignOut }: any) {
                   Logout
                 </button>
               </>
-            ) : null}
+            ) : (
+              <>
+                <div className="mt-2 border-t px-1 pt-2">
+                  <p className="px-2 py-1 text-xs uppercase tracking-wide text-muted-foreground">Get Started</p>
+                  <Link
+                    href="/login"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 rounded px-2 py-2 text-sm hover:bg-muted"
+                  >
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setOpen(false)}
+                    className="mt-1 flex items-center gap-2 rounded px-2 py-2 text-sm hover:bg-muted"
+                  >
+                    <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                    Sign Up
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

@@ -44,7 +44,7 @@ export default function TutorBookingsPage() {
     <div className="sb-page">
       <div className="sb-container max-w-5xl space-y-6">
         <h1 className="text-3xl font-bold">My Tutor Bookings</h1>
-        
+
         {/* Upcoming Bookings */}
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-primary">Upcoming Sessions ({upcomingBookings.length})</h2>

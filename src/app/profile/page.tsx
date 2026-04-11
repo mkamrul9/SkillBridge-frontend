@@ -199,45 +199,45 @@ export default function ProfilePage() {
           <CardContent className="space-y-5">
             <div className="rounded-xl border bg-muted/30 p-4">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="shrink-0">
-                {user.image ? (
-                  <img
-                    src={user.image}
-                    alt={user.name}
-                    className="h-24 w-24 rounded-full border-2 border-primary/20 object-cover sm:h-28 sm:w-28"
-                  />
-                ) : (
-                  <div className="h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-muted" />
-                )}
-              </div>
-              <div className="w-full">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Name</p>
-                    <Input
-                      value={profileForm.name}
-                      onChange={(e) => setProfileForm((prev) => ({ ...prev, name: e.target.value }))}
+                <div className="shrink-0">
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      alt={user.name}
+                      className="h-24 w-24 rounded-full border-2 border-primary/20 object-cover sm:h-28 sm:w-28"
                     />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Email</p>
-                    <p className="rounded-md bg-background px-3 py-2 text-sm">{user.email}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Phone</p>
-                    <Input
-                      value={profileForm.phone}
-                      onChange={(e) => setProfileForm((prev) => ({ ...prev, phone: e.target.value }))}
-                      placeholder="Enter phone number"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Role</p>
-                    <p className="rounded-md bg-background px-3 py-2 text-sm capitalize">{user.role?.toLowerCase()}</p>
+                  ) : (
+                    <div className="h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-muted" />
+                  )}
+                </div>
+                <div className="w-full">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Name</p>
+                      <Input
+                        value={profileForm.name}
+                        onChange={(e) => setProfileForm((prev) => ({ ...prev, name: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Email</p>
+                      <p className="rounded-md bg-background px-3 py-2 text-sm">{user.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Phone</p>
+                      <Input
+                        value={profileForm.phone}
+                        onChange={(e) => setProfileForm((prev) => ({ ...prev, phone: e.target.value }))}
+                        placeholder="Enter phone number"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Role</p>
+                      <p className="rounded-md bg-background px-3 py-2 text-sm capitalize">{user.role?.toLowerCase()}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
             </div>
             <div className="flex justify-end">
               <Button onClick={handleSaveProfile} disabled={savingProfile} className="w-full sm:w-auto">

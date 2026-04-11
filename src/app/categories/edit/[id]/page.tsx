@@ -48,23 +48,23 @@ export default function EditCategoryPage() {
   return (
     <div className="sb-page">
       <div className="sb-container max-w-2xl">
-      <Card className="mx-auto w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Edit Category</CardTitle>
-        </CardHeader>
-        <form onSubmit={handleUpdate}>
-          <CardContent className="space-y-4">
-            <Input value={name} onChange={e=>setName(e.target.value)} placeholder="Category name" required />
-            <Input value={description} onChange={e=>setDescription(e.target.value)} placeholder="Description (optional)" />
-            {error && <div className="text-red-500 text-sm">{error}</div>}
-            {success && <div className="text-green-600 text-sm">{success}</div>}
-          </CardContent>
-          <CardFooter className="flex flex-col gap-2 sm:flex-row">
-            <Button type="submit" className="w-full sm:w-auto" disabled={loading || !name}>{loading ? "Saving..." : "Save"}</Button>
-            <Button type="button" variant="outline" className="w-full sm:w-auto" onClick={() => router.push("/categories")}>Back to Categories</Button>
-          </CardFooter>
-        </form>
-      </Card>
+        <Card className="mx-auto w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Edit Category</CardTitle>
+          </CardHeader>
+          <form onSubmit={handleUpdate}>
+            <CardContent className="space-y-4">
+              <Input value={name} onChange={e => setName(e.target.value)} placeholder="Category name" required />
+              <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Description (optional)" />
+              {error && <div className="text-red-500 text-sm">{error}</div>}
+              {success && <div className="text-green-600 text-sm">{success}</div>}
+            </CardContent>
+            <CardFooter className="flex flex-col gap-2 sm:flex-row">
+              <Button type="submit" className="w-full sm:w-auto" disabled={loading || !name}>{loading ? "Saving..." : "Save"}</Button>
+              <Button type="button" variant="outline" className="w-full sm:w-auto" onClick={() => router.push("/categories")}>Back to Categories</Button>
+            </CardFooter>
+          </form>
+        </Card>
       </div>
     </div>
   );

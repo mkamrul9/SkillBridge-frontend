@@ -69,12 +69,14 @@ const faqItems = [
 
 export default function HomePage() {
     const [activeSlide, setActiveSlide] = useState(0);
+    const [slideDirection, setSlideDirection] = useState<"left" | "right">("right");
     const [newsletterEmail, setNewsletterEmail] = useState("");
     const [newsletterLoading, setNewsletterLoading] = useState(false);
     const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
 
     useEffect(() => {
         const timer = setInterval(() => {
+            setSlideDirection("right");
             setActiveSlide((prev) => (prev + 1) % heroSlides.length);
         }, 5000);
 
@@ -94,8 +96,14 @@ export default function HomePage() {
     }, []);
 
     const slide = heroSlides[activeSlide];
-    const nextSlide = () => setActiveSlide((prev) => (prev + 1) % heroSlides.length);
-    const prevSlide = () => setActiveSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+    const nextSlide = () => {
+        setSlideDirection("right");
+        setActiveSlide((prev) => (prev + 1) % heroSlides.length);
+    };
+    const prevSlide = () => {
+        setSlideDirection("left");
+        setActiveSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+    };
 
     const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -152,7 +160,11 @@ export default function HomePage() {
                 >
                     <ChevronRight className="h-5 w-5" />
                 </button>
-                <div className="relative z-10 mx-auto max-w-4xl space-y-6">
+                <div
+                    key={`hero-slide-${activeSlide}`}
+                    className={`relative z-10 mx-auto max-w-4xl space-y-6 animate-in fade-in duration-300 ${slideDirection === "right" ? "slide-in-from-right-8" : "slide-in-from-left-8"
+                        }`}
+                >
                     <p className="text-xs uppercase tracking-[0.35em] text-cyan-200">SkillBridge</p>
                     <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">{slide.title}</h1>
                     <p className="mx-auto max-w-3xl text-base text-slate-100 sm:text-xl">{slide.subtitle}</p>
@@ -176,7 +188,10 @@ export default function HomePage() {
                                 key={`hero-dot-${index}`}
                                 type="button"
                                 aria-label={`Go to slide ${index + 1}`}
-                                onClick={() => setActiveSlide(index)}
+                                onClick={() => {
+                                    setSlideDirection(index > activeSlide ? "right" : "left");
+                                    setActiveSlide(index);
+                                }}
                                 className={`h-2.5 rounded-full transition-all ${activeSlide === index ? "w-8 bg-cyan-300" : "w-2.5 bg-white/40"}`}
                             />
                         ))}
