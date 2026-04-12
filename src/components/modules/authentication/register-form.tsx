@@ -39,7 +39,6 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [facebookLoading, setFacebookLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
@@ -92,32 +91,6 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
       toast.error("Google sign-in failed. Please try again.", { id: toastId });
     } finally {
       setGoogleLoading(false);
-    }
-  };
-
-  const handleFacebookSignIn = async () => {
-    const toastId = toast.loading("Redirecting to Facebook...");
-    setFacebookLoading(true);
-    try {
-      const appBaseUrl = window.location.origin;
-      const callbackURL = `${appBaseUrl}/dashboard`;
-      const errorCallbackURL = `${appBaseUrl}/register?socialError=facebook`;
-
-      const response = await (authClient as any).signIn.social({
-        provider: "facebook",
-        callbackURL,
-        errorCallbackURL,
-      });
-
-      if (response?.error) {
-        toast.error(response.error.message || "Facebook sign-in failed", { id: toastId });
-      } else {
-        toast.success("Opening Facebook sign-in...", { id: toastId });
-      }
-    } catch {
-      toast.error("Facebook sign-in failed. Please try again.", { id: toastId });
-    } finally {
-      setFacebookLoading(false);
     }
   };
 
@@ -520,14 +493,13 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
-        <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            onClick={handleGoogleSignIn}
-            disabled={googleLoading}
-          >
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={handleGoogleSignIn}
+          disabled={googleLoading}
+        >
             <svg
               aria-hidden="true"
               viewBox="0 0 24 24"
@@ -550,21 +522,8 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
                 fill="#EA4335"
               />
             </svg>
-            {googleLoading ? "Connecting..." : "Google"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            onClick={handleFacebookSignIn}
-            disabled={facebookLoading}
-          >
-            <svg aria-hidden="true" viewBox="0 0 24 24" className="mr-2 h-4 w-4" fill="#1877F2">
-              <path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073c0 6.016 4.388 11.003 10.125 11.927v-8.437H7.078v-3.49h3.047V9.413c0-3.017 1.792-4.685 4.533-4.685 1.313 0 2.686.236 2.686.236v2.962h-1.513c-1.491 0-1.956.93-1.956 1.885v2.262h3.328l-.532 3.49h-2.796V24C19.612 23.076 24 18.089 24 12.073z" />
-            </svg>
-            {facebookLoading ? "Connecting..." : "Facebook"}
-          </Button>
-        </div>
+            {googleLoading ? "Connecting..." : "Continue with Google"}
+        </Button>
         <div className="flex w-full items-center gap-2 text-xs text-muted-foreground">
           <div className="h-px flex-1 bg-border" />
           <span>or continue with email</span>

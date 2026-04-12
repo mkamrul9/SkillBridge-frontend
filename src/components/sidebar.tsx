@@ -8,8 +8,10 @@ import {
   BookOpenCheck,
   Briefcase,
   Grid3X3,
+  Home,
   LayoutDashboard,
   Menu,
+  MessageCircle,
   Shield,
   User,
   Users,
@@ -24,7 +26,9 @@ const getSectionsByRole = (role?: string): NavSection[] => {
       {
         title: "Admin",
         items: [
+          { href: "/", label: "Home", icon: Home },
           { href: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
+          { href: "/dashboard/chatbot", label: "AI Chat", icon: MessageCircle },
           { href: "/admin/users", label: "Manage Users", icon: Users },
           { href: "/categories", label: "Categories", icon: Grid3X3 },
           { href: "/reviews/all", label: "All Reviews", icon: BookOpenCheck },
@@ -43,7 +47,9 @@ const getSectionsByRole = (role?: string): NavSection[] => {
       {
         title: "Tutor",
         items: [
+          { href: "/", label: "Home", icon: Home },
           { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+          { href: "/dashboard/chatbot", label: "AI Chat", icon: MessageCircle },
           { href: "/bookings", label: "My Bookings", icon: Briefcase },
           { href: "/reviews", label: "My Reviews", icon: BookOpenCheck },
         ],
@@ -59,7 +65,9 @@ const getSectionsByRole = (role?: string): NavSection[] => {
     {
       title: "Student",
       items: [
+        { href: "/", label: "Home", icon: Home },
         { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+        { href: "/dashboard/chatbot", label: "AI Chat", icon: MessageCircle },
         { href: "/bookings", label: "My Bookings", icon: Briefcase },
         { href: "/reviews", label: "My Reviews", icon: BookOpenCheck },
         { href: "/tutors/become-tutor", label: "Become a Tutor", icon: Shield },
