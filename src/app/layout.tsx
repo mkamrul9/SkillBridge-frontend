@@ -33,7 +33,16 @@ export default function RootLayout({
             </UserProvider>
           </ConfirmProvider>
         </ThemeProvider>
-        <Toaster richColors position="top-right" />
+        <Toaster
+          richColors
+          closeButton
+          position="top-right"
+          toastOptions={{
+            duration: 3200,
+            className: "rounded-xl border border-border/70 bg-card text-card-foreground shadow-[0_14px_32px_-18px_rgba(15,23,42,0.55)]",
+            descriptionClassName: "text-muted-foreground",
+          }}
+        />
       </body>
     </html>
   );

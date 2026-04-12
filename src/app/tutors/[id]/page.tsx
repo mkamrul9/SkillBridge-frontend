@@ -11,6 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { DEFAULT_AVATAR } from "@/lib/default-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { Facebook, Link2, Linkedin, Mail, MessageCircle, Share2, Twitter } from "lucide-react";
 
 function TutorDetailsSkeleton() {
@@ -66,6 +67,7 @@ export default function TutorDetailsPage() {
   const [imageFailed, setImageFailed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reviewSortBy, setReviewSortBy] = useState<"newest" | "highest">("newest");
+  const [shareOpen, setShareOpen] = useState(false);
   const { confirm } = useConfirm();
 
   const copyProfileLink = async () => {
@@ -198,42 +200,44 @@ export default function TutorDetailsPage() {
               <h1 className="text-2xl font-bold">{tutor.user.name}</h1>
               <p className="text-sm text-muted-foreground">Share this tutor with students and guardians across platforms.</p>
             </div>
-            <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:grid-cols-3">
-              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={() => openShare("whatsapp")}><MessageCircle className="h-4 w-4" />WhatsApp</button>
-              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={() => openShare("facebook")}><Facebook className="h-4 w-4" />Facebook</button>
-              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={() => openShare("linkedin")}><Linkedin className="h-4 w-4" />LinkedIn</button>
-              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={() => openShare("x")}><Twitter className="h-4 w-4" />X</button>
-              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={() => openShare("email")}><Mail className="h-4 w-4" />Email</button>
-              <button type="button" className="inline-flex items-center justify-center gap-1 rounded-md border bg-card px-3 py-2 text-sm hover:bg-muted" onClick={copyProfileLink}><Link2 className="h-4 w-4" />Copy Link</button>
+            <div className="relative w-full sm:w-auto">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full sm:w-auto"
+                onClick={() => setShareOpen((prev) => !prev)}
+              >
+                <Share2 className="h-4 w-4" />
+                Share Profile
+              </Button>
+              {shareOpen && (
+                <div className="absolute right-0 z-20 mt-2 grid w-64 grid-cols-2 gap-2 rounded-xl border bg-card p-3 shadow-lg">
+                  <Button type="button" variant="outline" size="sm" onClick={() => openShare("whatsapp")}><MessageCircle className="h-4 w-4" />WhatsApp</Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => openShare("facebook")}><Facebook className="h-4 w-4" />Facebook</Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => openShare("linkedin")}><Linkedin className="h-4 w-4" />LinkedIn</Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => openShare("x")}><Twitter className="h-4 w-4" />X</Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => openShare("email")}><Mail className="h-4 w-4" />Email</Button>
+                  <Button type="button" variant="outline" size="sm" onClick={copyProfileLink}><Link2 className="h-4 w-4" />Copy Link</Button>
+                </div>
+              )}
             </div>
           </div>
         </section>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-1">
-          <button
-            className="w-full sm:w-auto px-4 py-2 rounded bg-muted hover:bg-muted/70 border border-border text-base text-center"
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
             type="button"
             aria-label="Go back to previous page"
             onClick={() => window.history.back()}
           >
             Back
-          </button>
-          <button
-            className="inline-flex w-full items-center justify-center gap-2 rounded border border-border px-4 py-2 text-base hover:bg-muted sm:w-auto"
-            type="button"
-            aria-label="Copy tutor profile link"
-            onClick={copyProfileLink}
-          >
-            <Share2 className="h-4 w-4" />
-            Copy Profile Link
-          </button>
+          </Button>
           {(user as any)?.role === "STUDENT" && (
-            <a
-              href={`/bookings/create?tutorId=${params.id}`}
-              className="w-full sm:w-auto px-4 py-2 rounded bg-primary text-white hover:bg-primary/90 border border-primary text-base text-center"
-            >
-              Create Booking
-            </a>
+            <Link href={`/bookings/create?tutorId=${params.id}`} className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto">Create Booking</Button>
+            </Link>
           )}
           {!user && (
             <div
@@ -339,15 +343,16 @@ export default function TutorDetailsPage() {
                 <div className="mt-8">
                   <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <h3 className="text-lg font-bold">Reviews</h3>
-                    <button
+                    <Button
                       type="button"
-                      className="rounded border px-3 py-1 text-sm hover:bg-muted"
+                      variant="outline"
+                      size="sm"
                       onClick={() =>
                         setReviewSortBy((prev) => (prev === "newest" ? "highest" : "newest"))
                       }
                     >
                       Sort: {reviewSortBy === "newest" ? "Newest" : "Highest rating"}
-                    </button>
+                    </Button>
                   </div>
                   <div className="space-y-4">
                     {sortedReviews.map((review: any) => {
@@ -365,8 +370,10 @@ export default function TutorDetailsPage() {
                               </div>
                               {canDelete && (
                                 <div className="w-full sm:w-auto">
-                                  <button
-                                    className="mt-2 sm:mt-0 ml-0 sm:ml-4 px-2 py-1 rounded bg-destructive text-white text-xs hover:bg-destructive/80 w-full sm:w-auto"
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    className="mt-2 sm:mt-0 ml-0 sm:ml-4 w-full sm:w-auto"
                                     onClick={async () => {
                                       const approved = await confirm({
                                         title: "Delete review",
@@ -389,7 +396,7 @@ export default function TutorDetailsPage() {
                                     }}
                                   >
                                     Delete
-                                  </button>
+                                  </Button>
                                 </div>
                               )}
                             </div>
@@ -437,9 +444,9 @@ export default function TutorDetailsPage() {
                       </div>
                       <div className="pt-1">
                         <Link href={`/tutors/${item.id}`}>
-                          <button className="w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+                          <Button className="w-full" size="sm">
                             View Details
-                          </button>
+                          </Button>
                         </Link>
                       </div>
                     </CardContent>

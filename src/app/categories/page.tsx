@@ -13,7 +13,7 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
-  const pageSize = 5;
+  const pageSize = 6;
   const { user } = useUser();
   const router = useRouter();
   const { confirm } = useConfirm();

@@ -24,6 +24,7 @@ import { z } from "zod";
 import { useUser } from "@/lib/user-context";
 import { useEffect, useState } from "react";
 import { getApiBaseUrl } from "@/lib/api-url";
+import { Eye, EyeOff } from "lucide-react";
 
 const debugError = (...args: unknown[]) => {
   if (process.env.NODE_ENV !== "production") {
@@ -35,6 +36,7 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
   const router = useRouter();
   const { setUser } = useUser();
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Surface OAuth errors on return, then clean URL query parameters.
   useEffect(() => {
@@ -232,14 +234,25 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                    <Input
-                      type="password"
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      placeholder="••••••••"
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder="••••••••"
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
