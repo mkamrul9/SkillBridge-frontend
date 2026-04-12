@@ -108,7 +108,7 @@ export function Sidebar() {
   }
   return (
     <>
-      <div className="sticky top-0 z-30 border-b bg-card/90 px-3 py-3 backdrop-blur md:hidden">
+      <div className="sticky top-14 z-30 border-b bg-card/90 px-3 py-3 backdrop-blur md:hidden">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-sm font-bold">{user?.role || "Student"} Tabs</span>
         </div>
@@ -133,7 +133,7 @@ export function Sidebar() {
         </div>
       </div>
 
-      <aside className="sticky top-0 hidden min-h-screen w-64 flex-col gap-4 border-r bg-card/80 px-3 py-5 backdrop-blur md:flex">
+      <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-64 shrink-0 flex-col gap-4 overflow-y-auto border-r bg-card/80 px-3 py-5 backdrop-blur md:flex">
         <div className="mb-6 flex items-center justify-between">
           <span className="font-bold text-sm sm:text-lg">SkillBridge</span>
           <Button size="sm" variant="ghost" onClick={() => setVisible(false)} title="Hide Sidebar" aria-label="Hide sidebar">
