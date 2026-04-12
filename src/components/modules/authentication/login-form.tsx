@@ -266,6 +266,28 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
           onClick={handleGoogleSignIn}
           disabled={googleLoading}
         >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className="mr-2 h-4 w-4"
+          >
+            <path
+              d="M23.52 12.27c0-.79-.07-1.54-.2-2.27H12v4.31h6.47a5.54 5.54 0 0 1-2.4 3.64v3.02h3.88c2.27-2.09 3.57-5.17 3.57-8.7z"
+              fill="#4285F4"
+            />
+            <path
+              d="M12 24c3.24 0 5.95-1.07 7.93-2.9l-3.88-3.02c-1.07.72-2.44 1.15-4.05 1.15-3.11 0-5.74-2.1-6.68-4.93H1.32v3.1A12 12 0 0 0 12 24z"
+              fill="#34A853"
+            />
+            <path
+              d="M5.32 14.3A7.2 7.2 0 0 1 4.95 12c0-.8.14-1.56.37-2.3V6.6H1.32A12 12 0 0 0 0 12c0 1.94.46 3.78 1.32 5.4l4-3.1z"
+              fill="#FBBC05"
+            />
+            <path
+              d="M12 4.77c1.76 0 3.33.6 4.57 1.77l3.42-3.42A11.98 11.98 0 0 0 12 0 12 12 0 0 0 1.32 6.6l4 3.1c.94-2.83 3.57-4.93 6.68-4.93z"
+              fill="#EA4335"
+            />
+          </svg>
           {googleLoading ? "Connecting..." : "Continue with Google"}
         </Button>
         <div className="flex w-full items-center gap-2 text-xs text-muted-foreground">
