@@ -5,10 +5,27 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CalendarClock, CheckCircle2, Clock3, GraduationCap, Star } from "lucide-react";
+import {
+    Bar,
+    BarChart,
+    CartesianGrid,
+    Cell,
+    Legend,
+    Line,
+    LineChart,
+    Pie,
+    PieChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
+} from "recharts";
 
 import { getApiBaseUrl } from "@/lib/api-url";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+const CHART_COLORS = ["#0ea5e9", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#14b8a6"];
 
 export default function DashboardPage() {
     const [profile, setProfile] = useState<any>(null);
@@ -20,6 +37,8 @@ export default function DashboardPage() {
     const [availability, setAvailability] = useState("");
     const [categories, setCategories] = useState<any[]>([]);
     const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
+    const [bookingSearch, setBookingSearch] = useState("");
+    const [bookingStatusFilter, setBookingStatusFilter] = useState("all");
 
     const router = useRouter();
 
@@ -111,6 +130,75 @@ export default function DashboardPage() {
                 .slice(0, 3),
         };
     }, [bookings]);
+
+    const studentBookingsByStatus = useMemo(() => {
+        const counter = new Map<string, number>();
+
+        bookings.forEach((booking) => {
+            const status = String(booking.status || "unknown").toLowerCase();
+            counter.set(status, (counter.get(status) || 0) + 1);
+        });
+
+        return Array.from(counter.entries()).map(([status, count]) => ({ status, count }));
+    }, [bookings]);
+
+    const studentBookingTrend = useMemo(() => {
+        const dayMap: Record<string, number> = {};
+        const now = new Date();
+
+        for (let i = 6; i >= 0; i -= 1) {
+            const d = new Date(now);
+            d.setDate(now.getDate() - i);
+            const key = d.toISOString().slice(0, 10);
+            dayMap[key] = 0;
+        }
+
+        bookings.forEach((booking) => {
+            const start = new Date(booking.startTime);
+            const key = start.toISOString().slice(0, 10);
+            if (Object.prototype.hasOwnProperty.call(dayMap, key)) {
+                dayMap[key] += 1;
+            }
+        });
+
+        return Object.entries(dayMap).map(([date, count]) => ({
+            date: new Date(date).toLocaleDateString(undefined, { weekday: "short" }),
+            count,
+        }));
+    }, [bookings]);
+
+    const studentBookingsByCategory = useMemo(() => {
+        const counter = new Map<string, number>();
+
+        bookings.forEach((booking) => {
+            const names: string[] = booking.tutor?.categories?.map((cat: any) => cat.name) || [];
+            if (names.length === 0) {
+                counter.set("Uncategorized", (counter.get("Uncategorized") || 0) + 1);
+                return;
+            }
+
+            names.forEach((name) => {
+                counter.set(name, (counter.get(name) || 0) + 1);
+            });
+        });
+
+        return Array.from(counter.entries())
+            .map(([name, value]) => ({ name, value }))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 6);
+    }, [bookings]);
+
+    const filteredBookings = useMemo(() => {
+        const search = bookingSearch.trim().toLowerCase();
+
+        return bookings.filter((booking) => {
+            const tutorName = String(booking.tutor?.user?.name || "").toLowerCase();
+            const status = String(booking.status || "").toLowerCase();
+            const matchesSearch = !search || tutorName.includes(search);
+            const matchesStatus = bookingStatusFilter === "all" || status === bookingStatusFilter;
+            return matchesSearch && matchesStatus;
+        });
+    }, [bookings, bookingSearch, bookingStatusFilter]);
 
     const handleUpdateTutorProfile = async () => {
         const apiUrl = getApiBaseUrl();
@@ -394,6 +482,138 @@ export default function DashboardPage() {
                                     </CardContent>
                                 </Card>
                             </div>
+
+                            <div className="grid gap-4 lg:grid-cols-2">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Bookings by Status</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="h-72 w-full">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <BarChart data={studentBookingsByStatus}>
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis dataKey="status" />
+                                                    <YAxis allowDecimals={false} />
+                                                    <Tooltip />
+                                                    <Legend />
+                                                    <Bar dataKey="count" name="Sessions" radius={[6, 6, 0, 0]}>
+                                                        {studentBookingsByStatus.map((_, index) => (
+                                                            <Cell key={`student-status-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                                                        ))}
+                                                    </Bar>
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Last 7 Days Activity</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="h-72 w-full">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <LineChart data={studentBookingTrend}>
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis dataKey="date" />
+                                                    <YAxis allowDecimals={false} />
+                                                    <Tooltip />
+                                                    <Legend />
+                                                    <Line type="monotone" dataKey="count" name="Sessions" stroke="#0ea5e9" strokeWidth={3} />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Category Mix</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="h-80 w-full">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie
+                                                    data={studentBookingsByCategory}
+                                                    dataKey="value"
+                                                    nameKey="name"
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    outerRadius={110}
+                                                    label
+                                                >
+                                                    {studentBookingsByCategory.map((_, index) => (
+                                                        <Cell key={`student-cat-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip />
+                                                <Legend />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Bookings Table</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="mb-4 grid gap-3 sm:grid-cols-2">
+                                        <input
+                                            type="text"
+                                            value={bookingSearch}
+                                            onChange={(e) => setBookingSearch(e.target.value)}
+                                            placeholder="Search by tutor name"
+                                            className="h-10 rounded-md border bg-background px-3 text-sm"
+                                            aria-label="Search bookings by tutor name"
+                                        />
+                                        <select
+                                            value={bookingStatusFilter}
+                                            onChange={(e) => setBookingStatusFilter(e.target.value)}
+                                            className="h-10 rounded-md border bg-background px-3 text-sm"
+                                            aria-label="Filter bookings by status"
+                                        >
+                                            <option value="all">All statuses</option>
+                                            {Array.from(new Set(bookings.map((booking) => String(booking.status || "unknown").toLowerCase()))).map((status) => (
+                                                <option key={status} value={status}>{status}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-sm">
+                                            <thead>
+                                                <tr className="border-b text-left">
+                                                    <th className="py-2 pr-3 font-medium">Tutor</th>
+                                                    <th className="py-2 pr-3 font-medium">Start</th>
+                                                    <th className="py-2 pr-3 font-medium">End</th>
+                                                    <th className="py-2 pr-3 font-medium">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {filteredBookings.slice(0, 8).map((booking) => (
+                                                    <tr key={booking.id} className="border-b last:border-0">
+                                                        <td className="py-2 pr-3">{booking.tutor?.user?.name || "Tutor"}</td>
+                                                        <td className="py-2 pr-3">{new Date(booking.startTime).toLocaleString()}</td>
+                                                        <td className="py-2 pr-3">{new Date(booking.endTime).toLocaleString()}</td>
+                                                        <td className="py-2 pr-3">
+                                                            <span className="rounded-full border px-2 py-1 text-xs capitalize">{String(booking.status || "unknown").toLowerCase()}</span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                        {filteredBookings.length === 0 && (
+                                            <p className="py-4 text-center text-muted-foreground">No bookings match your current filter.</p>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
                         </>
                     )}
                 </div>
