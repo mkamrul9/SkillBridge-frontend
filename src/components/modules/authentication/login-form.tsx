@@ -59,8 +59,7 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
     const toastId = toast.loading("Redirecting to Google...");
     setGoogleLoading(true);
     try {
-      const appBaseUrl =
-        process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      const appBaseUrl = window.location.origin;
       const callbackURL = `${appBaseUrl}/dashboard`;
       const errorCallbackURL = `${appBaseUrl}/login?socialError=google`;
 
@@ -133,6 +132,36 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
       }
     },
   });
+
+  const fillDemoCredentials = (type: "student" | "admin" | "tutor") => {
+    const demoStudentEmail =
+      process.env.NEXT_PUBLIC_DEMO_STUDENT_EMAIL || "student.demo@skillbridge.com";
+    const demoStudentPassword =
+      process.env.NEXT_PUBLIC_DEMO_STUDENT_PASSWORD || "DemoUser123!";
+    const demoAdminEmail =
+      process.env.NEXT_PUBLIC_DEMO_ADMIN_EMAIL || "admin.demo@skillbridge.com";
+    const demoAdminPassword =
+      process.env.NEXT_PUBLIC_DEMO_ADMIN_PASSWORD || "DemoAdmin123!";
+    const demoTutorEmail =
+      process.env.NEXT_PUBLIC_DEMO_TUTOR_EMAIL || "tutor.demo@skillbridge.com";
+    const demoTutorPassword =
+      process.env.NEXT_PUBLIC_DEMO_TUTOR_PASSWORD || "DemoTutor123!";
+
+    if (type === "admin") {
+      form.setFieldValue("email", demoAdminEmail);
+      form.setFieldValue("password", demoAdminPassword);
+      return;
+    }
+
+    if (type === "tutor") {
+      form.setFieldValue("email", demoTutorEmail);
+      form.setFieldValue("password", demoTutorPassword);
+      return;
+    }
+
+    form.setFieldValue("email", demoStudentEmail);
+    form.setFieldValue("password", demoStudentPassword);
+  };
 
   return (
     <Card className="border-border/80 bg-card/95 shadow-xl backdrop-blur" {...props}>
@@ -247,6 +276,20 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
         <Button form="login-form" type="submit" className="w-full">
           Sign In
         </Button>
+        <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-3">
+          <Button type="button" variant="secondary" onClick={() => fillDemoCredentials("student")}>
+            Demo Student
+          </Button>
+          <Button type="button" variant="secondary" onClick={() => fillDemoCredentials("tutor")}>
+            Demo Tutor
+          </Button>
+          <Button type="button" variant="secondary" onClick={() => fillDemoCredentials("admin")}>
+            Demo Admin
+          </Button>
+        </div>
+        <p className="rounded-md border border-dashed bg-muted/40 px-3 py-2 text-center text-xs text-muted-foreground">
+          Click a demo role to autofill valid seeded credentials.
+        </p>
         <p className="px-8 text-center text-sm text-muted-foreground">
           Don't have an account?{" "}
           <a

@@ -72,8 +72,7 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
     const toastId = toast.loading("Redirecting to Google...");
     setGoogleLoading(true);
     try {
-      const appBaseUrl =
-        process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      const appBaseUrl = window.location.origin;
       const callbackURL = `${appBaseUrl}/dashboard`;
       const errorCallbackURL = `${appBaseUrl}/register?socialError=google`;
 

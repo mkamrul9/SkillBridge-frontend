@@ -14,43 +14,18 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, message: "Invalid email" }, { status: 400 });
         }
 
-        const apiKey = process.env.BREVO_API_KEY;
-        const listIdRaw = process.env.BREVO_LIST_ID;
-        const listId = Number(listIdRaw);
-
-        if (!apiKey || !listIdRaw || Number.isNaN(listId)) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: "Newsletter service is not configured yet",
-                },
-                { status: 500 }
-            );
-        }
-
-        const brevoRes = await fetch("https://api.brevo.com/v3/contacts", {
+        const backendBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const proxyRes = await fetch(`${backendBase}/api/newsletter`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "api-key": apiKey,
             },
-            body: JSON.stringify({
-                email,
-                listIds: [listId],
-                updateEnabled: true,
-            }),
+            body: JSON.stringify({ email }),
         });
 
-        if (!brevoRes.ok) {
-            const errorText = await brevoRes.text();
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: "Brevo rejected the subscription",
-                    details: errorText,
-                },
-                { status: 502 }
-            );
+        const data = await proxyRes.json().catch(() => ({ success: false, message: "Failed to subscribe" }));
+        if (!proxyRes.ok || !data?.success) {
+            return NextResponse.json(data, { status: proxyRes.status || 500 });
         }
 
         return NextResponse.json({ success: true });
