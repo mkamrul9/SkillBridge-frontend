@@ -8,6 +8,7 @@ import { UserProvider } from "@/lib/user-context";
 import ResponsiveContainer from "@/components/ResponsiveContainer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ConfirmProvider } from "@/components/confirm-provider";
+import ChatbotFab from "@/components/chatbot-fab";
 
 export const metadata: Metadata = {
   title: "SkillBridge",
@@ -29,6 +30,7 @@ export default function RootLayout({
               <ResponsiveContainer className="sb-shell">
                 {children}
               </ResponsiveContainer>
+              <ChatbotFab />
               <Footer />
             </UserProvider>
           </ConfirmProvider>
