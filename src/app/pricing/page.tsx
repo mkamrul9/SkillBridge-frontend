@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 const plans = [
     {
         name: "Starter",
-        price: "$0",
+        price: "0 TK",
         description: "Great for exploring tutors and booking your first lessons.",
         features: [
             "Tutor discovery and filtering",
@@ -13,7 +13,7 @@ const plans = [
     },
     {
         name: "Growth",
-        price: "$19 / month",
+        price: "200 TK / month",
         description: "For active learners who want ongoing progress support.",
         features: [
             "Everything in Starter",
@@ -24,7 +24,7 @@ const plans = [
     },
     {
         name: "Pro",
-        price: "$49 / month",
+        price: "500 TK / month",
         description: "For serious learners and advanced tutoring workflows.",
         features: [
             "Everything in Growth",
