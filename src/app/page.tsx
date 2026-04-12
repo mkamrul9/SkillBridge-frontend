@@ -196,10 +196,18 @@ export default function HomePage() {
                             />
                         ))}
                     </div>
+
+                    <a
+                        href="#home-next-section"
+                        className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/45 bg-black/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-white/90 transition hover:bg-black/35"
+                    >
+                        Scroll for more
+                        <ChevronDown className="h-4 w-4 animate-bounce" />
+                    </a>
                 </div>
             </section>
 
-            <section className="sb-section-blue w-full py-14">
+            <section id="home-next-section" className="sb-section-blue w-full py-14">
                 <div className="mx-auto grid max-w-6xl gap-4 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
                     {[
                         ["1,200+", "Active Students"],

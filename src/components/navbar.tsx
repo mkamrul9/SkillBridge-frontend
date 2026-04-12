@@ -26,6 +26,7 @@ const navConfig = {
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
     { href: "/tutors", label: "Tutors" },
+    { href: "/pricing", label: "Pricing" },
     { href: "/help", label: "Help" },
   ],
 };
