@@ -103,7 +103,7 @@ export default function TutorsPage() {
     });
 
     params.append("page", page.toString());
-    params.append("limit", "5");
+    params.append("limit", "8");
 
     const fetchUrl = `${url}?${params.toString()}`;
 
